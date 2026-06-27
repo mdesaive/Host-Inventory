@@ -1,0 +1,1 @@
+"""VM metadata source implementations."""

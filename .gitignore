@@ -1,0 +1,4 @@
+*.prom
+textfile
+ps
+.env

@@ -1,0 +1,13 @@
+[MASTER]
+jobs=1
+
+[MESSAGES CONTROL]
+disable=
+    C0114,
+    R0903
+
+[FORMAT]
+max-line-length=120
+
+[DESIGN]
+max-args=8

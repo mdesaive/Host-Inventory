@@ -1,0 +1,40 @@
+services:
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    restart: unless-stopped
+    command:
+      - "--collector.textfile.directory=/textfiles"
+    volumes:
+      - ./textfiles:/textfiles:ro
+    ports:
+      - "9100:9100"
+
+  sidecar:
+    image: python:3.12-slim
+    restart: unless-stopped
+    environment:
+      SOURCE: "${SOURCE:-vmware}"
+      HOST: "${HOST:-https://vcenter.example.com}"
+      USERNAME: "${USERNAME:-administrator@vsphere.local}"
+      PASSWORD: "${PASSWORD:-secret}"
+      NO_VERIFY_SSL: "${NO_VERIFY_SSL:-false}"
+      SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
+    volumes:
+      - .:/app:ro
+      - ./textfiles:/textfiles
+    working_dir: /app
+    command: >
+      sh -c '
+        pip install --quiet -r requirements.txt &&
+        while true; do
+          ARGS="--source $$SOURCE --output prometheus --host $$HOST
+                --username $$USERNAME --password $$PASSWORD"
+          if [ "$$NO_VERIFY_SSL" = "true" ]; then
+            ARGS="$$ARGS --no-verify-ssl"
+          fi
+          python main.py $$ARGS > /textfiles/vm_inventory.prom 2>&1 \
+            || echo "[sidecar] Export failed, retrying in $$SCRAPE_INTERVAL s"
+          sleep $$SCRAPE_INTERVAL
+        done
+      '
