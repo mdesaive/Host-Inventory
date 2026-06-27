@@ -14,7 +14,7 @@ services:
     image: python:3.12-slim
     restart: unless-stopped
     environment:
-      HOST: "${DCK01_HOST:-http://10.0.40.11:2375}"
+      HOST: "${DCK01_HOST}"
       SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
     volumes:
       - ./app:/app:ro
@@ -35,7 +35,7 @@ services:
     image: python:3.12-slim
     restart: unless-stopped
     environment:
-      HOST: "${DCK02_HOST:-http://10.0.40.12:2375}"
+      HOST: "${DCK02_HOST}"
       SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
     volumes:
       - ./app:/app:ro
@@ -56,7 +56,7 @@ services:
     image: python:3.12-slim
     restart: unless-stopped
     environment:
-      HOST: "${DCK03_HOST:-http://10.0.40.13:2375}"
+      HOST: "${DCK03_HOST}"
       SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
     volumes:
       - ./app:/app:ro
@@ -77,7 +77,7 @@ services:
     image: python:3.12-slim
     restart: unless-stopped
     environment:
-      HOST: "${DCK04_HOST:-http://10.0.40.14:2375}"
+      HOST: "${DCK04_HOST}"
       SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
     volumes:
       - ./app:/app:ro
@@ -98,7 +98,7 @@ services:
     image: python:3.12-slim
     restart: unless-stopped
     environment:
-      HOST: "${DCK05_HOST:-http://10.0.40.15:2375}"
+      HOST: "${DCK05_HOST}"
       SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
     volumes:
       - ./app:/app:ro
@@ -120,7 +120,7 @@ services:
     image: python:3.12-slim
     restart: unless-stopped
     environment:
-      HOST: "${DCK06_HOST:-http://10.0.40.16:2375}"
+      HOST: "${DCK06_HOST}"
       SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
     volumes:
       - ./app:/app:ro
@@ -141,9 +141,9 @@ services:
     image: python:3.12-slim
     restart: unless-stopped
     environment:
-      HOST: "${VCSIM_HOST:-https://localhost:8989}"
-      USERNAME: "${VCSIM_USERNAME:-user}"
-      PASSWORD: "${VCSIM_PASSWORD:-pass}"
+      HOST: "${VCSIM_HOST}"
+      USERNAME: "${VCSIM_USERNAME}"
+      PASSWORD: "${VCSIM_PASSWORD}"
       SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
     network_mode: host
     volumes:

@@ -38,3 +38,12 @@ Use the Docker Compose setup in the repo root. It starts two containers:
 - **node_exporter**: serves the metrics from that directory when scraped by Prometheus
 
 This decoupled design intentionally limits scrape frequency — the inventory data is meant as a static migration overview, not a real-time monitoring feed.
+
+#### Configure Docker Compose
+
+```bash
+cp env.example .env
+vim .env
+```
+
+You need to populate the .env file. Feel free to use the example data in env.example.
