@@ -1,4 +1,4 @@
-# host-inventory
+# Host-Inventory
 
 Collects inventory data from Docker and VMware and exports it as CSV or Prometheus metrics via node_exporter textfile collector.
 
