@@ -98,7 +98,7 @@ class VMwareSource(BaseSource):
         names: list[str] = []
         for net in networks:
             try:
-                names.append(VMwareSource._sanitze_label(net.name))
+                names.append(VMwareSource._sanitize_label(net.name))
             except Exception:  # pylint: disable=broad-except
                 pass
         return ",".join(names)
