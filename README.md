@@ -172,7 +172,6 @@ curl http://localhost:9101/metrics | grep vm_inventory
 ls -lh textfiles/
 cat textfiles/docker_tools01.prom
 ```
-
 ## Grafana Dashboard
 
 ### Concept: join on `uid`
@@ -211,4 +210,95 @@ If it returns results the full pipeline
 
 **2. Create a new panel**
 
-Dashboards → New → New Dashboard → Add visualization → select
+Dashboards → New → New Dashboard → Add visualization → select your
+Prometheus data source.
+
+**3. Add queries**
+
+Add one query per metric. For every query set two options in the query editor:
+- **Format** → `Table`
+- **Type** → `Instant`
+
+These two settings are mandatory — without them Grafana shows a time series
+instead of a single current value per VM.
+
+Set a **Legend** label for each query — this becomes the column name in the
+table after the Merge transform:
+
+| Query | Legend | Metric |
+|---|---|---|
+| A | `base` | `vm_inventory_info * on(uid, source_type) group_left(name) vm_inventory_name_info * on(uid, source_type) group_left(host) vm_inventory_host_info{host=~"$host"} * on(uid, source_type) group_left(state) vm_inventory_state_info * on(uid, source_type) group_left(networks) vm_inventory_networks_info * on(uid, source_type) group_left(volumes) vm_inventory_volumes_info` |
+| B | `CPUs` | `vm_inventory_cpus{source_type=~"$source_type"} * on(uid, source_type) group_left(host) vm_inventory_host_info{host=~"$host"}` |
+| C | `RAM (MB)` | `vm_inventory_ram_mb{source_type=~"$source_type"} * on(uid, source_type) group_left(host) vm_inventory_host_info{host=~"$host"}` |
+| D | `CPU (MHz)` | `vm_inventory_cpu_usage_mhz{source_type=~"$source_type"} * on(uid, source_type) group_left(host) vm_inventory_host_info{host=~"$host"}` |
+| E | `CPU (%)` | `vm_inventory_cpu_usage_percent{source_type=~"$source_type"} * on(uid, source_type) group_left(host) vm_inventory_host_info{host=~"$host"}` |
+| F | `Volumes` | `vm_inventory_volumes_count{source_type=~"$source_type"} * on(uid, source_type) group_left(host) vm_inventory_host_info{host=~"$host"}` |
+| G | `Capacity (GB)` | `vm_inventory_volumes_capacity_gb{source_type=~"$source_type"} * on(uid, source_type) group_left(host) vm_inventory_host_info{host=~"$host"}` |
+
+Query A is the base — it carries all string fields via join. Queries B–G
+each add one numeric value. The `host=~"$host"` and
+`source_type=~"$source_type"` filters wire up the dashboard variables
+(see step 8).
+
+**4. Transform tab**
+
+Click the **Transform** tab and add the following transforms in order:
+
+1. **Labels to fields**
+   - Mode: `Columns`
+   - Value field name: `uid`
+
+2. **Merge series / tables**
+
+   The first transform converts Prometheus labels into table columns. The
+   second merges all queries into one row per VM matched on `uid`.
+
+3. **Filter fields by name** — tick only the columns you want to display,
+   for example: `name`, `source_type`, `host`, `state`, `CPUs`, `RAM (MB)`,
+   `CPU (MHz)`, `CPU (%)`, `Volumes`, `Capacity (GB)`, `networks`, `volumes`.
+   Hide `uid`, `instance`, `job` and any other internal labels.
+
+4. **Organize fields** — reorder columns by drag and drop and rename any
+   remaining fields as needed.
+
+**5. Optional: colour the state column**
+
+Panel options → **Value mappings** → add one mapping per state string:
+
+| Value | Color |
+|---|---|
+| `running` / `poweredOn` | Green |
+| `exited` / `poweredOff` | Red |
+| `paused` / `suspended` | Yellow |
+
+**6. Set panel type to Table**
+
+Top right of the panel editor → visualization picker → select **Table**.
+
+**7. Save the dashboard.**
+
+**8. Add filter variables**
+
+Dashboard Settings → Variables → New variable. Add two variables:
+
+Variable 1 — filter by source type:
+
+| Setting | Value |
+|---|---|
+| Type | Query |
+| Name | `source_type` |
+| Query | `label_values(vm_inventory_info, source_type)` |
+| Include All option | on |
+
+Variable 2 — filter by host:
+
+| Setting | Value |
+|---|---|
+| Type | Query |
+| Name | `host` |
+| Query | `label_values(vm_inventory_host_info, host)` |
+| Include All option | on |
+
+Save the dashboard settings. Two dropdowns appear at the top of the
+dashboard — one to filter by source type (docker / vmware) and one to
+filter by host. Selecting **All** shows everything.
