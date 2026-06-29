@@ -10,7 +10,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from sources.base import BaseSource, VM
+from sources.base import BaseSource, VM, _sanitize_label
 
 
 class DockerSource(BaseSource):
@@ -110,20 +110,23 @@ class DockerSource(BaseSource):
 
         # /containers/<container ID>/json delivers all configuration setting. But no runtime data.
         details = self._get(f"/containers/{cid}/json")
-        name = details.get("Name", "").lstrip("/")
+        name = _sanitize_label(details.get("Name", "").lstrip("/"))
         nano = details.get("HostConfig", {}).get("NanoCpus", 0)
         cpus = int(nano / 1_000_000_000) if nano else -1
         ram_mb = self._container_ram_mb(cid)
         nets = list(details.get("NetworkSettings", {}).get("Networks", {}).keys())
         mounts = details.get("Mounts", [])
-        volumes = ",".join(sorted(m.get("Destination", "") for m in mounts if m.get("Destination")))
+        volumes = ",".join(
+            _sanitize_label(m.get("Destination", ""))
+            for m in mounts if m.get("Destination")
+        )
         volumes_count = len(mounts)
         return VM(
             name=name,
             host=host_name,
             cpus=cpus,
             ram_mb=ram_mb,
-            networks=",".join(sorted(nets)),
+            networks=",".join(_sanitize_label(n) for n in nets),
             volumes=volumes,
             source_type="docker",
             volumes_count=volumes_count,

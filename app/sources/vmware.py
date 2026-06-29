@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 from pyVim.connect import Disconnect, SmartConnect
 from pyVmomi import vim  # pylint: disable=no-name-in-module
 
-from sources.base import BaseSource, VM
+from sources.base import BaseSource, VM, _sanitize_label
 
 
 class VMwareSource(BaseSource):
@@ -79,7 +79,7 @@ class VMwareSource(BaseSource):
         parts: list[str] = []
         for device in devices:
             if isinstance(device, vim.vm.device.VirtualDisk):
-                label = device.deviceInfo.label if device.deviceInfo else "disk"
+                label = _sanitize_label(device.deviceInfo.label if device.deviceInfo else "disk")
                 capacity_kb = device.capacityInKB or 0
                 size_gb = round(capacity_kb / 1024 / 1024)
                 parts.append(f"{label}:{size_gb}GB")
@@ -98,7 +98,7 @@ class VMwareSource(BaseSource):
         names: list[str] = []
         for net in networks:
             try:
-                names.append(net.name)
+                names.append(VMwareSource._sanitze_label(net.name))
             except Exception:  # pylint: disable=broad-except
                 pass
         return ",".join(names)
@@ -138,8 +138,8 @@ class VMwareSource(BaseSource):
         volumes_count = len(disks)
         volumes_capacity_total_gb = round(sum(d.capacityInKB for d in disks) / 1024 / 1024)
         return VM(
-            name=cfg.name,
-            host=self._host_name(vm),
+            name=_sanitize_label(cfg.name),
+            host=_sanitize_label(self._host_name(vm)),
             cpus=cfg.hardware.numCPU,
             ram_mb=cfg.hardware.memoryMB,
             networks=self._networks_to_string(vm.network or []),
@@ -148,18 +148,6 @@ class VMwareSource(BaseSource):
             volumes_count=volumes_count,
             volumes_capacity_total_gb=volumes_capacity_total_gb,
         )
-
-    @staticmethod
-    def _sanitize_label(value: str) -> str:
-        """Remove characters that are illegal in Prometheus label values.
-
-        Args:
-            value: Raw label string.
-
-        Returns:
-            Sanitised string safe for Prometheus labels.
-        """
-        return re.sub(r'[\\"\n]', "_", value)
 
     # ------------------------------------------------------------------
     # Public API

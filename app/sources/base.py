@@ -3,8 +3,20 @@
 Defines the shared VM dataclass and the abstract base class for all sources.
 """
 
+import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+
+def _sanitize_label(value: str) -> str:
+    """Remove characters that are illegal in CSV and Prometheus label values.
+
+    Args:
+        value: Raw string to sanitize.
+
+    Returns:
+        Sanitised string with problematic characters replaced by underscores.
+    """
+    return re.sub(r'[\\"\n\r,;\'|]', "_", value)
 
 
 @dataclass
