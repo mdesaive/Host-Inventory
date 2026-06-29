@@ -16,7 +16,7 @@ def _sanitize_label(value: str) -> str:
     Returns:
         Sanitised string with problematic characters replaced by underscores.
     """
-    return re.sub(r'[\\"\n\r,;\'|]', "_", value)
+    return re.sub(r'[\\"\n\r\u2028\u2029,;\'|]', "_", value)
 
 
 @dataclass
