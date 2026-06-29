@@ -40,6 +40,7 @@ class VM:
     source_type: str
     host: str
     name: str
+    state: str
     cpus: int
     ram_mb: int
     volumes_count: int

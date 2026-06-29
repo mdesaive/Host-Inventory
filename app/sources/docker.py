@@ -124,6 +124,7 @@ class DockerSource(BaseSource):
         return VM(
             name=name,
             host=host_name,
+            state=details.get("State", {}).get("Status", "unknown"),
             cpus=cpus,
             ram_mb=ram_mb,
             networks=",".join(_sanitize_label(n) for n in nets),

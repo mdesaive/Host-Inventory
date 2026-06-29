@@ -133,6 +133,10 @@ class VMwareSource(BaseSource):
         cfg = vm.config
         if cfg is None:
             raise AttributeError("vm.config is None")
+        try:
+            state = str(vm.runtime.powerState)
+        except Exception:  # pylint: disable=broad-except
+            state = "unknown"
         devices = cfg.hardware.device or []
         disks = [d for d in devices if isinstance(d, vim.vm.device.VirtualDisk)]
         volumes_count = len(disks)
@@ -140,6 +144,7 @@ class VMwareSource(BaseSource):
         return VM(
             name=_sanitize_label(cfg.name),
             host=_sanitize_label(self._host_name(vm)),
+            state=state,
             cpus=cfg.hardware.numCPU,
             ram_mb=cfg.hardware.memoryMB,
             networks=self._networks_to_string(vm.network or []),
