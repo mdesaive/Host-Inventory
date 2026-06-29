@@ -133,6 +133,7 @@ class VMwareSource(BaseSource):
         cfg = vm.config
         if cfg is None:
             raise AttributeError("vm.config is None")
+        uid = _sanitize_label(cfg.uuid) if cfg.uuid else _sanitize_label(cfg.name)
         try:
             state = str(vm.runtime.powerState)
         except Exception:  # pylint: disable=broad-except
@@ -146,6 +147,7 @@ class VMwareSource(BaseSource):
         volumes_count = len(disks)
         volumes_capacity_total_gb = round(sum(d.capacityInKB for d in disks) / 1024 / 1024)
         return VM(
+            uid=uid,
             name=_sanitize_label(cfg.name),
             host=_sanitize_label(self._host_name(vm)),
             state=state,

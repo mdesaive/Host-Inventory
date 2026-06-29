@@ -1,58 +1,214 @@
 # Host-Inventory
 
-Collects inventory data from Docker and VMware and exports it as CSV or Prometheus metrics via node_exporter textfile collector.
+Collects VM and container metadata from Docker and VMware sources and exports
+it as CSV or Prometheus metrics via node_exporter textfile collector.
+
+Designed as a lightweight migration-tracking tool — not a real-time monitoring
+feed. The scrape interval is intentionally configurable and defaults to 300 s.
 
 ## Status
 
-Work in progress — currently exploring possibilities, not production-ready.
+Work in progress — not production-ready.
 
-## Structure
+## Repository Structure
 
-TODO
+```
+.
+├── app/
+│   ├── main.py                  # Entry point
+│   ├── sources/
+│   │   ├── base.py              # VM dataclass and abstract base source
+│   │   ├── docker.py            # Docker TCP API source
+│   │   └── vmware.py            # VMware / vcsim source (pyVmomi)
+│   └── output/
+│       ├── csv.py               # Semicolon-delimited CSV output
+│       └── prometheus.py        # Prometheus exposition format output
+├── compose.yaml                 # Production Compose setup
+├── compose.yaml.example-vcsim-docker  # Example: multiple Docker + vcsim
+├── env.example--vcsim-docker    # Matching .env template
+└── textfiles/                   # Bind-mounted .prom files for node_exporter
+```
 
-## Exported Data
+## Data Model
 
-Will be documented once the setup stabilizes.
+The exporter uses a flat `VM` dataclass that represents both VMware VMs and
+Docker containers uniformly:
+
+```python
+@dataclass
+class VM:
+    uid: str                       # VMware: vm.config.uuid | Docker: container name
+    source_type: str               # "vmware" | "docker"
+    name: str                      # VM / container name
+    host: str                      # ESXi host / Docker node hostname
+    state: str                     # VMware: poweredOn/poweredOff/suspended
+                                   # Docker:  running/exited/paused/...
+    cpus: int                      # CPU count; -1 = unlimited (Docker, no CPU limit)
+    cpu_usage_mhz: int             # VMware: overallCpuUsage | Docker: 0
+    cpu_usage_percent: float       # Docker: CPU% | VMware: 0.0
+    ram_mb: int                    # VMware: provisioned | Docker: current usage
+    volumes_count: int             # Number of attached disks / mounts
+    volumes_capacity_total_gb: int # VMware: sum of disk sizes | Docker: -1
+    volumes: str                   # VMware: "Hard disk 1:50GB,Hard disk 2:100GB"
+                                   # Docker:  "/data,/config"
+    networks: str                  # Comma-separated network names
+```
+
+### Prometheus metric structure
+
+The Prometheus output (`--output prometheus`) splits the fields into three
+categories to keep time series stable across state changes and migrations.
+
+**Stable identity metric** — labels never change, no new series on state
+changes. `uid` remains stable across renames and host migrations:
+
+```
+vm_inventory_info{uid, name, source_type} 1
+```
+
+**Mutable info metrics** — one metric per mutable string field, value always
+1. A series ends (goes stale) when the value changes and a new one starts.
+This is intentional and decoupled from the stable identity metric:
+
+```
+vm_inventory_host_info{uid, name, source_type, host}       1
+vm_inventory_state_info{uid, name, source_type, state}     1
+vm_inventory_volumes_info{uid, name, source_type, volumes} 1
+vm_inventory_networks_info{uid, name, source_type, networks} 1
+```
+
+**Numeric gauges** — stable key labels only, no mutable string fields:
+
+```
+vm_inventory_cpus{uid, name, source_type}
+vm_inventory_ram_mb{uid, name, source_type}
+vm_inventory_cpu_usage_mhz{uid, name, source_type}
+vm_inventory_cpu_usage_percent{uid, name, source_type}
+vm_inventory_volumes_count{uid, name, source_type}
+vm_inventory_volumes_capacity_gb{uid, name, source_type}
+```
 
 ## Usage
 
-### Generate CSV inventory
-
-Clone the repo and copy the `./app` directory to a machine with access to a Docker or VMware API.
-
-#### (Optional) Create Venv
-In case you do not have the necessary modules installed, you could create a venv:
-
-```
-python3 -m venv ~/venv-Host-Inventory
-source ~/venv-Host-Inventory/bin/activate
-pip install -r ./app/requirements.txt
-```
-
-VMware:
-```bash
-python main.py --source vmware --output csv --host https://<hostname>:8989 --username <username> --password <password>
-```
-
-Docker:
-```bash
-python main.py --source docker --output csv --host http://<hostname>:2375
-```
-
-### Prometheus exporter
-
-Use the Docker Compose setup in the repo root. It starts two containers:
-
-- **collector sidecar**: runs `main.py` on a configurable interval and writes metrics to a bind-mounted directory
-- **node_exporter**: serves the metrics from that directory when scraped by Prometheus
-
-This decoupled design intentionally limits scrape frequency — the inventory data is meant as a static migration overview, not a real-time monitoring feed.
-
-#### Configure Docker Compose
+### Requirements
 
 ```bash
-cp env.example .env
+pip install -r app/requirements.txt
+```
+
+Or use a venv:
+
+```bash
+python3 -m venv ~/venv-host-inventory
+source ~/venv-host-inventory/bin/activate
+pip install -r app/requirements.txt
+```
+
+### Run directly
+
+**CSV output:**
+
+```bash
+# Docker
+python app/main.py --source docker --output csv \
+  --host http://<hostname>:2375
+
+# VMware / vcsim
+python app/main.py --source vmware --output csv \
+  --host https://<hostname>:443 \
+  --username <user> --password <pass>
+```
+
+**Prometheus output (stdout):**
+
+```bash
+# Docker
+python app/main.py --source docker --output prometheus \
+  --host http://<hostname>:2375
+
+# VMware
+python app/main.py --source vmware --output prometheus \
+  --host https://<hostname>:443 \
+  --username <user> --password <pass> --no-verify-ssl
+```
+
+### Docker Compose setup
+
+The Compose setup runs one `node_exporter` container plus one sidecar per
+source. Each sidecar runs `main.py` in a loop and writes a `.prom` file into
+a shared bind-mounted `textfiles/` directory. `node_exporter` serves those
+files when scraped by Prometheus.
+
+**1. Copy and edit the env file:**
+
+```bash
+cp env.example--vcsim-docker .env
 vim .env
 ```
 
-You need to populate the .env file. Feel free to use the example data in env.example.
+`.env` variables:
+
+| Variable | Description | Example |
+|---|---|---|
+| `DCK01_HOST` … `DCK06_HOST` | Docker TCP endpoint URLs | `http://10.0.40.15:2375` |
+| `VCSIM_HOST` | vCenter / vcsim URL | `https://vcenter.example.com` |
+| `VCSIM_USERNAME` | vCenter username | `administrator@vsphere.local` |
+| `VCSIM_PASSWORD` | vCenter password | |
+| `SCRAPE_INTERVAL` | Seconds between collection runs (default: 300) | `300` |
+
+**2. Start:**
+
+```bash
+docker compose -f compose.yaml.example-vcsim-docker up -d
+```
+
+**3. Verify:**
+
+```bash
+# node_exporter metrics endpoint
+curl http://localhost:9101/metrics | grep vm_inventory
+
+# raw .prom files
+ls -lh textfiles/
+cat textfiles/docker_tools01.prom
+```
+
+## Grafana Dashboard
+
+### Concept: join on `uid`
+
+`uid` is the stable anchor across migrations. VMware UUIDs survive renames
+and host migrations. Docker container names are stable in Compose stacks
+(prefixed with the hostname to ensure uniqueness across nodes).
+All numeric metrics carry only `uid` and `source_type` as labels —
+mutable fields like `host`, `state`, `name` are joined in via PromQL:
+
+```promql
+vm_inventory_info
+  * on(uid, source_type) group_left(name)     vm_inventory_name_info
+  * on(uid, source_type) group_left(host)     vm_inventory_host_info
+  * on(uid, source_type) group_left(state)    vm_inventory_state_info
+  * on(uid, source_type) group_left(networks) vm_inventory_networks_info
+  * on(uid, source_type) group_left(volumes)  vm_inventory_volumes_info
+```
+
+This way a time series survives the move from `esx-01` to `pve-01` without
+a gap.
+
+### Building the inventory table
+
+**1. Verify the data source**
+
+Settings → Data Sources → select the Prometheus instance that scrapes the
+`node_exporter` running in this Compose stack. Smoke-test in Explore:
+
+```promql
+vm_inventory_info
+```
+
+If it returns results the full pipeline
+(exporter → textfile → node\_exporter → Prometheus → Grafana) is working.
+
+**2. Create a new panel**
+
+Dashboards → New → New Dashboard → Add visualization → select

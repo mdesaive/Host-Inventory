@@ -119,6 +119,7 @@ class DockerSource(BaseSource):
         # /containers/<container ID>/json delivers all configuration setting. But no runtime data.
         details = self._get(f"/containers/{cid}/json")
         name = _sanitize_label(details.get("Name", "").lstrip("/"))
+        uid = name
         nano = details.get("HostConfig", {}).get("NanoCpus", 0)
         cpus = int(nano / 1_000_000_000) if nano else -1
         ram_mb, cpu_percent = self._container_stats(cid)
@@ -130,6 +131,7 @@ class DockerSource(BaseSource):
         )
         volumes_count = len(mounts)
         return VM(
+            uid=uid,
             name=name,
             host=host_name,
             state=details.get("State", {}).get("Status", "unknown"),

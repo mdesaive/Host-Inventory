@@ -37,6 +37,7 @@ class VM:
         networks: Comma-separated list of network names.
     """
 
+    uid: str
     source_type: str
     host: str
     name: str
