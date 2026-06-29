@@ -1,0 +1,166 @@
+services:
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    restart: unless-stopped
+    command:
+      - "--collector.textfile.directory=/textfiles"
+    volumes:
+      - ./textfiles:/textfiles:ro
+    ports:
+      - "9101:9100" # Select distinct port for node exporter.
+
+  sidecar_tools01:
+    image: python:3.12-slim
+    restart: unless-stopped
+    environment:
+      HOST: "${DCK01_HOST}"
+      SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
+    volumes:
+      - ./app:/app:ro
+      - ./textfiles:/textfiles
+    working_dir: /app
+    command: >
+      sh -c '
+        pip install --quiet -r /app/requirements.txt &&
+        while true; do
+          python /app/main.py --source docker --output prometheus \
+            --host "$$HOST" \
+            > /textfiles/docker_tools01.prom \
+            || echo "[sidecar_docker] Export failed, retrying in $$SCRAPE_INTERVAL s"
+          sleep $$SCRAPE_INTERVAL
+        done
+      '
+  sidecar_tools02:
+    image: python:3.12-slim
+    restart: unless-stopped
+    environment:
+      HOST: "${DCK02_HOST}"
+      SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
+    volumes:
+      - ./app:/app:ro
+      - ./textfiles:/textfiles
+    working_dir: /app
+    command: >
+      sh -c '
+        pip install --quiet -r /app/requirements.txt &&
+        while true; do
+          python /app/main.py --source docker --output prometheus \
+            --host "$$HOST" \
+            > /textfiles/docker_tools02.prom \
+            || echo "[sidecar_docker] Export failed, retrying in $$SCRAPE_INTERVAL s"
+          sleep $$SCRAPE_INTERVAL
+        done
+      '
+  sidecar_tools03:
+    image: python:3.12-slim
+    restart: unless-stopped
+    environment:
+      HOST: "${DCK03_HOST}"
+      SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
+    volumes:
+      - ./app:/app:ro
+      - ./textfiles:/textfiles
+    working_dir: /app
+    command: >
+      sh -c '
+        pip install --quiet -r /app/requirements.txt &&
+        while true; do
+          python /app/main.py --source docker --output prometheus \
+            --host "$$HOST" \
+            > /textfiles/docker_tools03.prom \
+            || echo "[sidecar_docker] Export failed, retrying in $$SCRAPE_INTERVAL s"
+          sleep $$SCRAPE_INTERVAL
+        done
+      '
+  sidecar_tools04:
+    image: python:3.12-slim
+    restart: unless-stopped
+    environment:
+      HOST: "${DCK04_HOST}"
+      SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
+    volumes:
+      - ./app:/app:ro
+      - ./textfiles:/textfiles
+    working_dir: /app
+    command: >
+      sh -c '
+        pip install --quiet -r /app/requirements.txt &&
+        while true; do
+          python /app/main.py --source docker --output prometheus \
+            --host "$$HOST" \
+            > /textfiles/docker_tools04.prom \
+            || echo "[sidecar_docker] Export failed, retrying in $$SCRAPE_INTERVAL s"
+          sleep $$SCRAPE_INTERVAL
+        done
+      '
+  sidecar_tools05:
+    image: python:3.12-slim
+    restart: unless-stopped
+    environment:
+      HOST: "${DCK05_HOST}"
+      SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
+    volumes:
+      - ./app:/app:ro
+      - ./textfiles:/textfiles
+    working_dir: /app
+    command: >
+      sh -c '
+        pip install --quiet -r /app/requirements.txt &&
+        while true; do
+          python /app/main.py --source docker --output prometheus \
+            --host "$$HOST" \
+            > /textfiles/docker_tools05.prom \
+            || echo "[sidecar_docker] Export failed, retrying in $$SCRAPE_INTERVAL s"
+          sleep $$SCRAPE_INTERVAL
+        done
+      '
+
+  sidecar_tools06:
+    image: python:3.12-slim
+    restart: unless-stopped
+    environment:
+      HOST: "${DCK06_HOST}"
+      SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
+    volumes:
+      - ./app:/app:ro
+      - ./textfiles:/textfiles
+    working_dir: /app
+    command: >
+      sh -c '
+        pip install --quiet -r /app/requirements.txt &&
+        while true; do
+          python /app/main.py --source docker --output prometheus \
+            --host "$$HOST" \
+            > /textfiles/docker_tools06.prom \
+            || echo "[sidecar_docker] Export failed, retrying in $$SCRAPE_INTERVAL s"
+          sleep $$SCRAPE_INTERVAL
+        done
+      '
+  sidecar_vcsim:
+    image: python:3.12-slim
+    restart: unless-stopped
+    environment:
+      HOST: "${VCSIM_HOST}"
+      USERNAME: "${VCSIM_USERNAME}"
+      PASSWORD: "${VCSIM_PASSWORD}"
+      SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
+    network_mode: host
+    volumes:
+      - ./app:/app:ro
+      - ./textfiles:/textfiles
+    working_dir: /app
+    command: >
+      sh -c '
+        pip install --quiet -r /app/requirements.txt &&
+        while true; do
+          python /app/main.py --source vmware --output prometheus \
+            --host "$$HOST" \
+            --username "$$USERNAME" \
+            --password "$$PASSWORD" \
+            --no-verify-ssl \
+            > /textfiles/vmware_vcsim.prom \
+            || echo "[sidecar_vcsim] Export failed, retrying in $$SCRAPE_INTERVAL s"
+          sleep $$SCRAPE_INTERVAL
+        done
+      '
