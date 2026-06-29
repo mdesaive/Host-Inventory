@@ -42,6 +42,8 @@ class VM:
     name: str
     state: str
     cpus: int
+    cpu_usage_mhz: int       # VMware: overallCpuUsage, Docker: 0
+    cpu_usage_percent: float # Docker: CPU%, VMware: 0.0
     ram_mb: int
     volumes_count: int
     volumes_capacity_total_gb: int

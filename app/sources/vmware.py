@@ -137,6 +137,10 @@ class VMwareSource(BaseSource):
             state = str(vm.runtime.powerState)
         except Exception:  # pylint: disable=broad-except
             state = "unknown"
+        try:
+            cpu_usage_mhz = vm.summary.quickStats.overallCpuUsage or 0
+        except Exception: # pylint: disable=broad-except
+            cpu_usage_mhz = 0
         devices = cfg.hardware.device or []
         disks = [d for d in devices if isinstance(d, vim.vm.device.VirtualDisk)]
         volumes_count = len(disks)
@@ -146,6 +150,8 @@ class VMwareSource(BaseSource):
             host=_sanitize_label(self._host_name(vm)),
             state=state,
             cpus=cfg.hardware.numCPU,
+            cpu_usage_mhz=cpu_usage_mhz,
+            cpu_usage_percent=0.0,
             ram_mb=cfg.hardware.memoryMB,
             networks=self._networks_to_string(vm.network or []),
             volumes=self._disks_to_string(cfg.hardware.device or []),

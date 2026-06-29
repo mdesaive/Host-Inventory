@@ -71,27 +71,35 @@ class DockerSource(BaseSource):
             print(f"[DockerSource] Could not fetch /info: {exc}")
             return "unknown"
 
-    def _container_ram_mb(self, container_id: str) -> int:
-        """Fetch current RAM usage for a container in MB.
-           
-           Annotation: Queries expensive live data using the /stats endpoint.
-                       If latency is relevant use /json endpoint and ram max
-                       and ram reservation.
-        Args:
-            container_id: Container ID string.
-
+    def _container_stats(self, container_id: str) -> tuple:
+        """Fetch RAM usage in MB and CPU percent for a container.
+    
         Returns:
-            RAM usage in MB, or ``0`` on error.
+            Tuple (ram_mb, cpu_percent).
         """
         try:
             stats = self._get(f"/containers/{container_id}/stats?stream=false")
             mem = stats.get("memory_stats", {})
             usage = mem.get("usage", 0)
             cache = mem.get("stats", {}).get("cache", 0)
-            return max(0, (usage - cache)) // (1024 * 1024)
+            ram_mb = max(0, (usage - cache)) // (1024 * 1024)
+    
+            cpu = stats.get("cpu_stats", {})
+            precpu = stats.get("precpu_stats", {})
+            cpu_delta = (cpu.get("cpu_usage", {}).get("total_usage", 0)
+                         - precpu.get("cpu_usage", {}).get("total_usage", 0))
+            system_delta = (cpu.get("system_cpu_usage", 0)
+                            - precpu.get("system_cpu_usage", 0))
+            num_cpus = len(cpu.get("cpu_usage", {}).get("percpu_usage", [1]))
+            if system_delta > 0:
+                cpu_percent = round((cpu_delta / system_delta) * num_cpus * 100.0, 1)
+            else:
+                cpu_percent = 0.0
+    
+            return ram_mb, cpu_percent
         except Exception as exc:  # pylint: disable=broad-except
             print(f"[DockerSource] Could not fetch stats for {container_id}: {exc}")
-            return 0
+            return 0, 0.0
 
     # ------------------------------------------------------------------
     # Public API
@@ -113,7 +121,7 @@ class DockerSource(BaseSource):
         name = _sanitize_label(details.get("Name", "").lstrip("/"))
         nano = details.get("HostConfig", {}).get("NanoCpus", 0)
         cpus = int(nano / 1_000_000_000) if nano else -1
-        ram_mb = self._container_ram_mb(cid)
+        ram_mb, cpu_percent = self._container_stats(cid)
         nets = list(details.get("NetworkSettings", {}).get("Networks", {}).keys())
         mounts = details.get("Mounts", [])
         volumes = ",".join(
@@ -126,6 +134,8 @@ class DockerSource(BaseSource):
             host=host_name,
             state=details.get("State", {}).get("Status", "unknown"),
             cpus=cpus,
+            cpu_usage_mhz=0,
+            cpu_usage_percent=cpu_percent,
             ram_mb=ram_mb,
             networks=",".join(_sanitize_label(n) for n in nets),
             volumes=volumes,

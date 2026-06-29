@@ -22,7 +22,7 @@ _GAUGE_METRICS: dict[str, str] = {
     "vm_inventory_volumes_capacity_total_gb": "volumes_capacity_total_gb",
 }
 
-_LABEL_FIELDS: tuple[str, ...] = ("name", "host", "state", "networks", "volumes", "volumes_count", "volumes_capacity_total_gb", "source_type", "cpus", "ram_mb")
+_LABEL_FIELDS: tuple[str, ...] = ("source_type", "name", "host", "state", "cpus", "cpu_usage_mhz", "cpu_usage_percent", "ram_mb", "volumes_count", "volumes_capacity_total_gb", "volumes", "networks")
 
 
 def _sanitize_label_value(value: str) -> str:
