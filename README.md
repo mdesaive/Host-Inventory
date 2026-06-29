@@ -20,6 +20,15 @@ Will be documented once the setup stabilizes.
 
 Clone the repo and copy the `./app` directory to a machine with access to a Docker or VMware API.
 
+#### (Optional) Create Venv
+In case you do not have the necessary modules installed, you could create a venv:
+
+```
+python3 -m venv ~/venv-Host-Inventory
+source ~/venv-Host-Inventory/bin/activate
+pip install -r ./app/requirements.txt
+```
+
 VMware:
 ```bash
 python main.py --source vmware --output csv --host https://<hostname>:8989 --username <username> --password <password>
