@@ -1,5 +1,8 @@
-services:
+secrets:
+  vcsim_password:
+    file: ./secrets/vcsim_password.txt
 
+services:
   node_exporter:
     image: prom/node-exporter:latest
     restart: unless-stopped
@@ -20,6 +23,10 @@ services:
       - ./app:/app:ro
       - ./textfiles:/textfiles
     working_dir: /app
+    labels:
+      host-inventory.annotation: |-
+        [INVENTORY: batch=demo; status=not_started; difficulty=4; downtime_impact=2; stakeholder=team-y]
+        Reads inventory data from brh-tools01.
     command: >
       sh -c '
         pip install --quiet -r /app/requirements.txt &&
@@ -31,6 +38,7 @@ services:
           sleep $$SCRAPE_INTERVAL
         done
       '
+  
   sidecar_tools02:
     image: python:3.12-slim
     restart: unless-stopped
@@ -143,13 +151,15 @@ services:
     environment:
       HOST: "${VCSIM_HOST}"
       USERNAME: "${VCSIM_USERNAME}"
-      PASSWORD: "${VCSIM_PASSWORD}"
+      PASSWORD_FILE: /run/secrets/vcsim_password
       SCRAPE_INTERVAL: "${SCRAPE_INTERVAL:-300}"
     network_mode: host
     volumes:
       - ./app:/app:ro
       - ./textfiles:/textfiles
     working_dir: /app
+    secrets:
+      - vcsim_password
     command: >
       sh -c '
         pip install --quiet -r /app/requirements.txt &&
@@ -157,7 +167,7 @@ services:
           python /app/main.py --source vmware --output prometheus \
             --host "$$HOST" \
             --username "$$USERNAME" \
-            --password "$$PASSWORD" \
+            --password-file "$$PASSWORD_FILE" \
             --no-verify-ssl \
             > /textfiles/vmware_vcsim.prom \
             || echo "[sidecar_vcsim] Export failed, retrying in $$SCRAPE_INTERVAL s"
