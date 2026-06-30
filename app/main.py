@@ -90,7 +90,7 @@ def _resolve_password(args: argparse.Namespace) -> str:
             sys.exit(1)
     if args.password:
         print(
-            "Warning: --password exposes the secret in shell history and "
+            "Warning: \"--password\" exposes the secret in shell history and "
             "process listings. Prefer --password-file.",
             file=sys.stderr,
         )
