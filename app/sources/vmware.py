@@ -135,11 +135,12 @@ class VMwareSource(BaseSource):
             raise AttributeError("vm.config is None")
         name = _sanitize_label(cfg.name)
         host = _sanitize_label(self._host_name(vm))
-        # uid: instance UUID + host. The instance UUID alone is not always
-        # unique — restored or cloned VMs can retain the original UUID,
-        # which would otherwise create ambiguous PromQL joins.
+        # uid: instance UUID + host + name. The instance UUID alone is not
+        # always unique — restored or cloned VMs can retain the original
+        # UUID, sometimes even on the same host, which would otherwise
+        # create ambiguous PromQL joins.
         instance_uuid = _sanitize_label(cfg.uuid) if cfg.uuid else name
-        uid = f"{instance_uuid}__{host}"
+        uid = f"{instance_uuid}__{host}__{name}"
         try:
             state = str(vm.runtime.powerState)
         except Exception:  # pylint: disable=broad-except
