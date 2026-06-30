@@ -13,13 +13,14 @@ import sys
 from sources.base import VM
 
 
-# Stable identity labels — never change for a given VM
-_STABLE_LABELS: tuple[str, ...] = ("uid", "source_type")
+# Stable identity labels — never change for a given VM.
+# uid is constructed (in sources/) to already be unique per host
+# (vmware: instance_uuid + host, docker: host + name). host and name
+# are still carried as separate labels for display and filtering.
+_STABLE_LABELS: tuple[str, ...] = ("uid", "source_type", "host", "name")
 
 # Mutable string fields — each gets its own info metric
 _MUTABLE_INFO_FIELDS: tuple[tuple[str, str], ...] = (
-    ("name",                  "Current name of the VM"),
-    ("host",                  "Current host of the VM"),
     ("state",                 "Current power/run state of the VM"),
     ("volumes",                "Current volumes attached to the VM"),
     ("networks",               "Current networks attached to the VM"),
