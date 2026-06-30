@@ -1,5 +1,6 @@
 *.prom
-textfile
 ps
 .env
 compose.yaml
+textfile
+secrets

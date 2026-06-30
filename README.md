@@ -104,6 +104,10 @@ source ~/venv-host-inventory/bin/activate
 pip install -r app/requirements.txt
 ```
 
+### Setup Password File for VMWare
+
+Set up a plain file with limited access rights that containers your VMWare users password.
+
 ### Run directly
 
 **CSV output:**
@@ -116,7 +120,7 @@ python app/main.py --source docker --output csv \
 # VMware / vcsim
 python app/main.py --source vmware --output csv \
   --host https://<hostname>:443 \
-  --username <user> --password <pass>
+  --username <user> --password-file <path to password file>
 ```
 
 **Prometheus output (stdout):**
@@ -129,7 +133,7 @@ python app/main.py --source docker --output prometheus \
 # VMware
 python app/main.py --source vmware --output prometheus \
   --host https://<hostname>:443 \
-  --username <user> --password <pass> --no-verify-ssl
+  --username <user> --password-file <path to password file> 
 ```
 
 ### Docker Compose setup

@@ -49,8 +49,15 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--password",
-        default="pass",
-        help="Password for VMware authentication (default: pass).",
+        default=None,
+        help="Password for VMware authentication. Prefer --password-file.",
+    )
+    parser.add_argument(
+        "--password-file",
+        default=None,
+        dest="password_file",
+        help="Path to a file containing the VMware password. "
+             "Takes precedence over --password.",
     )
     parser.add_argument(
         "--no-verify-ssl",
@@ -59,6 +66,38 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Disable TLS certificate verification.",
     )
     return parser
+
+
+def _resolve_password(args: argparse.Namespace) -> str:
+    """Resolve the VMware password from --password-file or --password.
+
+    Args:
+        args: Parsed CLI arguments.
+
+    Returns:
+        The resolved password string.
+
+    Raises:
+        SystemExit: If neither --password-file nor --password is provided,
+            or if the password file cannot be read.
+    """
+    if args.password_file:
+        try:
+            with open(args.password_file, "r", encoding="utf-8") as pw_file:
+                return pw_file.read().strip()
+        except OSError as exc:
+            print(f"Error reading --password-file: {exc}", file=sys.stderr)
+            sys.exit(1)
+    if args.password:
+        print(
+            "Warning: --password exposes the secret in shell history and "
+            "process listings. Prefer --password-file.",
+            file=sys.stderr,
+        )
+        return args.password
+    print("Error: --source vmware requires --password or --password-file.",
+          file=sys.stderr)
+    sys.exit(1)
 
 
 def main() -> int:
@@ -74,10 +113,11 @@ def main() -> int:
     if args.source == "docker":
         source = DockerSource(host=args.host, no_verify_ssl=args.no_verify_ssl)
     elif args.source == "vmware":
+        password = _resolve_password(args)
         source = VMwareSource(
             host=args.host,
             username=args.username,
-            password=args.password,
+            password=password,
             no_verify_ssl=args.no_verify_ssl,
         )
     else:
