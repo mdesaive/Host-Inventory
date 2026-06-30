@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 from pyVim.connect import Disconnect, SmartConnect
 from pyVmomi import vim  # pylint: disable=no-name-in-module
 
-from sources.base import BaseSource, VM, _sanitize_label
+from sources.base import BaseSource, VM, _sanitize_label, parse_annotation
 
 
 class VMwareSource(BaseSource):
@@ -146,6 +146,9 @@ class VMwareSource(BaseSource):
         disks = [d for d in devices if isinstance(d, vim.vm.device.VirtualDisk)]
         volumes_count = len(disks)
         volumes_capacity_total_gb = round(sum(d.capacityInKB for d in disks) / 1024 / 1024)
+
+        migration_fields, free_text = parse_annotation(cfg.annotation or "")
+
         return VM(
             uid=uid,
             name=_sanitize_label(cfg.name),
@@ -160,6 +163,8 @@ class VMwareSource(BaseSource):
             source_type="vmware",
             volumes_count=volumes_count,
             volumes_capacity_total_gb=volumes_capacity_total_gb,
+            annotation=_sanitize_label(free_text),
+            **migration_fields,
         )
 
     # ------------------------------------------------------------------
@@ -210,3 +215,4 @@ class VMwareSource(BaseSource):
                     pass
 
         return vms
+

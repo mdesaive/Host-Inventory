@@ -18,21 +18,32 @@ _STABLE_LABELS: tuple[str, ...] = ("uid", "source_type")
 
 # Mutable string fields — each gets its own info metric
 _MUTABLE_INFO_FIELDS: tuple[tuple[str, str], ...] = (
-    ("name",     "Current name of the VM"),
-    ("host",     "Current host of the VM"),
-    ("state",    "Current power/run state of the VM"),
-    ("volumes",  "Current volumes attached to the VM"),
-    ("networks", "Current networks attached to the VM"),
+    ("name",                  "Current name of the VM"),
+    ("host",                  "Current host of the VM"),
+    ("state",                 "Current power/run state of the VM"),
+    ("volumes",                "Current volumes attached to the VM"),
+    ("networks",               "Current networks attached to the VM"),
+    ("annotation",             "Free-text annotation"),
+    ("migration_batch",        "Migration phase/wave"),
+    ("migration_status",       "Migration status"),
+    ("migration_stakeholder",  "Downtime coordination contact"),
+    ("migration_os_contact",   "Guest OS contact"),
+    ("migration_target",       "Migration target host/cluster"),
+    ("migration_notes",        "Migration-specific notes"),
 )
 
 # Numeric gauges — labels: stable key only
 _GAUGE_METRICS: tuple[tuple[str, str, str], ...] = (
-    ("vm_inventory_cpus",               "cpus",                    "Number of CPUs"),
+    ("vm_inventory_cpus",                "cpus",                    "Number of CPUs"),
     ("vm_inventory_ram_mb",             "ram_mb",                  "RAM in megabytes"),
     ("vm_inventory_cpu_usage_mhz",      "cpu_usage_mhz",           "CPU usage in MHz"),
     ("vm_inventory_cpu_usage_percent",  "cpu_usage_percent",       "CPU usage in percent"),
     ("vm_inventory_volumes_count",      "volumes_count",           "Number of attached volumes"),
     ("vm_inventory_volumes_capacity_gb","volumes_capacity_total_gb","Total volumes capacity in GB"),
+    ("vm_inventory_migration_difficulty", "migration_difficulty",
+     "Migration difficulty, 1-5"),
+    ("vm_inventory_migration_downtime_impact", "migration_downtime_impact",
+     "Migration downtime impact, 1-5"),
 )
 
 
@@ -136,3 +147,4 @@ def write_prometheus(vms: list[VM]) -> None:
             for vm in vms
         ]
         _emit_metric_block(metric_name, help_text, lines)
+

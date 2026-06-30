@@ -10,7 +10,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from sources.base import BaseSource, VM, _sanitize_label
+from sources.base import BaseSource, VM, _sanitize_label, parse_annotation
 
 
 class DockerSource(BaseSource):
@@ -119,7 +119,9 @@ class DockerSource(BaseSource):
         # /containers/<container ID>/json delivers all configuration setting. But no runtime data.
         details = self._get(f"/containers/{cid}/json")
         name = _sanitize_label(details.get("Name", "").lstrip("/"))
-        uid = name
+        # uid: hostname + container name. The name alone is not unique
+        # if the same container name runs on multiple Docker hosts.
+        uid = _sanitize_label(f"{host_name}__{name}")
         nano = details.get("HostConfig", {}).get("NanoCpus", 0)
         cpus = int(nano / 1_000_000_000) if nano else -1
         ram_mb, cpu_percent = self._container_stats(cid)
@@ -130,6 +132,11 @@ class DockerSource(BaseSource):
             for m in mounts if m.get("Destination")
         )
         volumes_count = len(mounts)
+
+        labels = details.get("Config", {}).get("Labels", {}) or {}
+        raw_annotation = labels.get("host-inventory.annotation", "")
+        migration_fields, free_text = parse_annotation(raw_annotation)
+
         return VM(
             uid=uid,
             name=name,
@@ -144,6 +151,8 @@ class DockerSource(BaseSource):
             source_type="docker",
             volumes_count=volumes_count,
             volumes_capacity_total_gb=-1,
+            annotation=_sanitize_label(free_text),
+            **migration_fields,
         )
 
     def fetch_vms(self) -> list[VM]:
@@ -168,3 +177,4 @@ class DockerSource(BaseSource):
                 print(f"[DockerSource] Skipping container {container.get('Id', '?')}: {exc}")
 
         return vms
+
