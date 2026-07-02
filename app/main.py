@@ -34,7 +34,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output",
         required=True,
-        choices=["csv", "prometheus"],
+        choices=["csv", "csv-networks", "prometheus"],
         help="Output format.",
     )
     parser.add_argument(
@@ -128,6 +128,9 @@ def main() -> int:
     # Write output
     if args.output == "csv":
         write_csv(vms)
+    elif args.output == "csv-networks":
+        from output.csv_networks import write_csv_networks
+        write_csv_networks(vms)
     elif args.output =="prometheus":
         write_prometheus(vms)
     else:
