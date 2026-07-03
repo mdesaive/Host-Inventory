@@ -2,7 +2,7 @@
 
 Usage::
 
-    python main.py --source docker|vmware --output csv|prometheus --host <host>
+    python main.py --source docker|vmware --output csv-vms|csv-networks|prometheus-vms --host <host>
 
 Run ``python main.py --help`` for a full list of options.
 """
@@ -34,7 +34,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output",
         required=True,
-        choices=["csv", "csv-networks", "prometheus"],
+        choices=["csv-vms", "csv-networks", "prometheus-vms"],
         help="Output format.",
     )
     parser.add_argument(
@@ -133,12 +133,12 @@ def main() -> int:
     vms = source.fetch_vms()
 
     # Write output
-    if args.output == "csv":
+    if args.output == "csv-vms":
         write_csv(vms)
     elif args.output == "csv-networks":
         from output.csv_networks import write_csv_networks
         write_csv_networks(vms)
-    elif args.output =="prometheus":
+    elif args.output =="prometheus-vms":
         write_prometheus(vms)
     else:
         raise ValueError(f"Unknown output: {args.output}")
