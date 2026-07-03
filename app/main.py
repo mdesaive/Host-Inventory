@@ -65,6 +65,12 @@ def _build_parser() -> argparse.ArgumentParser:
         dest="no_verify_ssl",
         help="Disable TLS certificate verification.",
     )
+    parser.add_argument(
+        "--quiet",
+        action="store_true",
+        default=False,
+        help="Suppress API call logging.",
+    )
     return parser
 
 
@@ -111,7 +117,7 @@ def main() -> int:
 
     # Build source
     if args.source == "docker":
-        source = DockerSource(host=args.host, no_verify_ssl=args.no_verify_ssl)
+        source = DockerSource(host=args.host, no_verify_ssl=args.no_verify_ssl, quiet=args.quiet)
     elif args.source == "vmware":
         password = _resolve_password(args)
         source = VMwareSource(
@@ -119,6 +125,7 @@ def main() -> int:
             username=args.username,
             password=password,
             no_verify_ssl=args.no_verify_ssl,
+            quiet=args.quiet,
         )
     else:
         raise ValueError(f"Unknown source: {args.source}")

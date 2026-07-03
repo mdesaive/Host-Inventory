@@ -3,7 +3,9 @@
 Defines the shared VM dataclass and the abstract base class for all sources.
 """
 
+import sys
 import re
+from datetime import datetime
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
@@ -147,6 +149,26 @@ class BaseSource(ABC):
 
     All concrete sources must implement :meth:`fetch_vms`.
     """
+
+    def __init__(self, host: str, quiet: bool = False) -> None:
+        """Initialise the source.
+
+        Args:
+            host: Connection endpoint.
+            quiet: If True, suppress all log output. Default False.
+        """
+        self.host = host
+        self.quiet = quiet
+
+    def _log(self, message: str) -> None:
+        """Log a timestamped message prefixed with the source class name.
+
+        Args:
+            message: Message to log.
+        """
+        if not self.quiet:
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print(f"{timestamp} [{self.__class__.__name__}] {message}", file=sys.stderr)
 
     @abstractmethod
     def fetch_vms(self) -> list[VM]:

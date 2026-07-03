@@ -29,6 +29,7 @@ class VMwareSource(BaseSource):
         username: str = "user",
         password: str = "pass",
         no_verify_ssl: bool = False,
+        quiet: bool = False,
     ) -> None:
         """Initialise the VMwareSource.
 
@@ -38,6 +39,7 @@ class VMwareSource(BaseSource):
             password: Login password.
             no_verify_ssl: Disable TLS verification when ``True``.
         """
+        super().__init__(host, quiet=quiet)
         parsed = urlparse(host)
         self._host = parsed.hostname or host
         self._port = parsed.port or 443
@@ -184,6 +186,9 @@ class VMwareSource(BaseSource):
         Returns:
             A list of :class:`~sources.base.VM` instances.
         """
+        import time
+        self._log(f"connecting to {self.host}")
+        t0 = time.monotonic()
         vms: list[VM] = []
         service_instance = None
 
@@ -220,6 +225,7 @@ class VMwareSource(BaseSource):
                     Disconnect(service_instance)
                 except Exception:  # pylint: disable=broad-except
                     pass
-
+        duration = time.monotonic() - t0
+        self._log(f"collected {len(vms)} VMs in {duration:.3f}s")
         return vms
 

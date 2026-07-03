@@ -21,13 +21,14 @@ class DockerSource(BaseSource):
         no_verify_ssl: If ``True``, TLS certificate verification is disabled.
     """
 
-    def __init__(self, host: str, no_verify_ssl: bool = False) -> None:
+    def __init__(self, host: str, no_verify_ssl: bool = False, quiet: bool = False) -> None:
         """Initialise the DockerSource.
 
         Args:
             host: Base URL of the Docker daemon.
             no_verify_ssl: Disable TLS certificate verification when ``True``.
         """
+        super().__init__(host, quiet=quiet)
         self._host = host.rstrip("/")
         self._no_verify_ssl = no_verify_ssl
 
@@ -161,6 +162,9 @@ class DockerSource(BaseSource):
         Returns:
             A list of :class:`~sources.base.VM` instances, one per running container.
         """
+        import time
+        self._log(f"connecting to {self.host}")
+        t0 = time.monotonic()
         host_name = self._host_name()
         vms: list[VM] = []
 
@@ -176,5 +180,7 @@ class DockerSource(BaseSource):
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"[DockerSource] Skipping container {container.get('Id', '?')}: {exc}")
 
+        duration = time.monotonic() - t0
+        self._log(f"collected {len(vms)} containers in {duration:.3f}s")
         return vms
 
