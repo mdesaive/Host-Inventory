@@ -75,7 +75,11 @@ class DockerSource(BaseSource):
 
     def _container_stats(self, container_id: str) -> tuple:
         """Fetch RAM usage in MB and CPU percent for a container.
-    
+
+        CPU percent is normalised to whole threads: 100 percent equals one
+        fully used thread, so a host with 8 threads tops out at 800 percent.
+        This matches the semantics of ``docker stats``.
+
         Returns:
             Tuple (ram_mb, cpu_percent).
         """
@@ -85,23 +89,56 @@ class DockerSource(BaseSource):
             usage = mem.get("usage", 0)
             cache = mem.get("stats", {}).get("cache", 0)
             ram_mb = max(0, (usage - cache)) // (1024 * 1024)
-    
+
             cpu = stats.get("cpu_stats", {})
             precpu = stats.get("precpu_stats", {})
             cpu_delta = (cpu.get("cpu_usage", {}).get("total_usage", 0)
                          - precpu.get("cpu_usage", {}).get("total_usage", 0))
             system_delta = (cpu.get("system_cpu_usage", 0)
                             - precpu.get("system_cpu_usage", 0))
-            num_cpus = len(cpu.get("cpu_usage", {}).get("percpu_usage", [1]))
-            if system_delta > 0:
+            num_cpus = (cpu.get("online_cpus")
+                        or len(cpu.get("cpu_usage", {}).get("percpu_usage") or [])
+                        or 1)
+            if system_delta > 0 and cpu_delta >= 0:
                 cpu_percent = round((cpu_delta / system_delta) * num_cpus * 100.0, 1)
             else:
                 cpu_percent = 0.0
-    
+
             return ram_mb, cpu_percent
         except Exception as exc:  # pylint: disable=broad-except
-            print(f"[DockerSource] Could not fetch stats for {container_id}: {exc}", file=sys.stderr)
+            print(f"[DockerSource] Could not fetch stats for {container_id}: {exc}",
+                  file=sys.stderr)
             return 0, 0.0
+
+ #   def _container_stats(self, container_id: str) -> tuple:
+ #       """Fetch RAM usage in MB and CPU percent for a container.
+ #   
+ #       Returns:
+ #           Tuple (ram_mb, cpu_percent).
+ #       """
+ #       try:
+ #           stats = self._get(f"/containers/{container_id}/stats?stream=false")
+ #           mem = stats.get("memory_stats", {})
+ #           usage = mem.get("usage", 0)
+ #           cache = mem.get("stats", {}).get("cache", 0)
+ #           ram_mb = max(0, (usage - cache)) // (1024 * 1024)
+ #   
+ #           cpu = stats.get("cpu_stats", {})
+ #           precpu = stats.get("precpu_stats", {})
+ #           cpu_delta = (cpu.get("cpu_usage", {}).get("total_usage", 0)
+ #                        - precpu.get("cpu_usage", {}).get("total_usage", 0))
+ #           system_delta = (cpu.get("system_cpu_usage", 0)
+ #                           - precpu.get("system_cpu_usage", 0))
+ #           num_cpus = len(cpu.get("cpu_usage", {}).get("percpu_usage", [1]))
+ #           if system_delta > 0:
+ #               cpu_percent = round((cpu_delta / system_delta) * num_cpus * 100.0, 1)
+ #           else:
+ #               cpu_percent = 0.0
+ #   
+ #           return ram_mb, cpu_percent
+ #       except Exception as exc:  # pylint: disable=broad-except
+ #           print(f"[DockerSource] Could not fetch stats for {container_id}: {exc}", file=sys.stderr)
+ #           return 0, 0.0
 
     # ------------------------------------------------------------------
     # Public API
