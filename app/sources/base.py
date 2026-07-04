@@ -9,6 +9,7 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+
 def _sanitize_label(value: str) -> str:
     """Remove characters that are illegal in CSV and Prometheus label values.
 
@@ -44,6 +45,7 @@ _INVENTORY_KEY_MAP: dict[str, str] = {
 
 # Fields that should be parsed as int; default 0 if missing/invalid.
 _INT_FIELDS = ("migration_difficulty", "info_downtime_impact")
+
 
 def parse_annotation(raw: str) -> tuple[dict[str, object], str]:
     """Split a VM annotation into structured migration fields and free text.
@@ -96,7 +98,7 @@ def parse_annotation(raw: str) -> tuple[dict[str, object], str]:
 
 
 @dataclass
-class VM:
+class VM: # pylint: disable=too-many-instance-attributes
     """Flat representation of a virtual machine or container.
 
     Attributes:
@@ -132,7 +134,7 @@ class VM:
     state: str
     cpus: float
     cpu_usage_mhz: int       # VMware: overallCpuUsage, Docker: 0
-    cpu_usage_percent: float # Docker: CPU%, VMware: 0.0
+    cpu_usage_percent: float  # Docker: CPU%, VMware: 0.0
     ram_mb: int
     volumes_count: int
     volumes_capacity_total_gb: int
@@ -147,6 +149,7 @@ class VM:
     info_os_contact: str = ""
     migration_target: str = ""
     migration_notes: str = ""
+
 
 class BaseSource(ABC):
     """Abstract base class for VM metadata sources.
@@ -181,4 +184,3 @@ class BaseSource(ABC):
         Returns:
             A list of :class:`VM` instances.
         """
-

@@ -10,8 +10,8 @@ Metric structure:
 """
 import re
 import sys
-from sources.base import VM
 from typing import IO, Optional
+from sources.base import VM
 
 
 # Stable identity labels — never change for a given VM.
@@ -48,6 +48,7 @@ _GAUGE_METRICS: tuple[tuple[str, str, str], ...] = (
     ("vm_inventory_info_downtime_impact", "info_downtime_impact",
      "Downtime impact, 1-5"),
 )
+
 
 def _escape_label_value(value: str) -> str:
     """Escape a string for safe use as a Prometheus label value.
@@ -149,4 +150,3 @@ def write_prometheus(vms: list[VM], file: Optional[IO[str]] = None) -> None:
             for vm in vms
         ]
         _emit_metric_block(metric_name, help_text, lines, file=file)
-

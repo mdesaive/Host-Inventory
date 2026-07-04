@@ -7,6 +7,7 @@ Uses only Python standard library (urllib, json).
 import sys
 import json
 import ssl
+import time
 import urllib.error
 import urllib.request
 from typing import Any
@@ -76,7 +77,7 @@ class DockerSource(BaseSource):
 
 #     def _host_name(self) -> str:
 #         """Return the Docker daemon's reported hostname.
-# 
+#
 #         Returns:
 #             The ``Name`` field from ``/info``, or ``"unknown"`` on error.
 #         """
@@ -114,18 +115,6 @@ class DockerSource(BaseSource):
                         or len(cpu.get("cpu_usage", {}).get("percpu_usage") or [])
                         or 1)
 
-
-            # if cpu_delta <= 0 or system_delta <= 0:
-            #     print(
-            #         f"[DockerSource] DEBUG {container_id[:12]}: "
-            #         f"cpu_delta={cpu_delta} system_delta={system_delta} "
-            #         f"num_cpus={num_cpus} "
-            #         f"pre_total={precpu.get('cpu_usage', {}).get('total_usage', 'MISSING')} "
-            #         f"cur_total={cpu.get('cpu_usage', {}).get('total_usage', 'MISSING')} "
-            #         f"pre_sys={precpu.get('system_cpu_usage', 'MISSING')}",
-            #         file=sys.stderr,
-            #     )
-
             if system_delta > 0 and cpu_delta >= 0:
                 cpu_percent = round((cpu_delta / system_delta) * num_cpus * 100.0, 2)
             else:
@@ -137,40 +126,11 @@ class DockerSource(BaseSource):
                   file=sys.stderr)
             return 0, 0.0
 
- #   def _container_stats(self, container_id: str) -> tuple:
- #       """Fetch RAM usage in MB and CPU percent for a container.
- #   
- #       Returns:
- #           Tuple (ram_mb, cpu_percent).
- #       """
- #       try:
- #           stats = self._get(f"/containers/{container_id}/stats?stream=false")
- #           mem = stats.get("memory_stats", {})
- #           usage = mem.get("usage", 0)
- #           cache = mem.get("stats", {}).get("cache", 0)
- #           ram_mb = max(0, (usage - cache)) // (1024 * 1024)
- #   
- #           cpu = stats.get("cpu_stats", {})
- #           precpu = stats.get("precpu_stats", {})
- #           cpu_delta = (cpu.get("cpu_usage", {}).get("total_usage", 0)
- #                        - precpu.get("cpu_usage", {}).get("total_usage", 0))
- #           system_delta = (cpu.get("system_cpu_usage", 0)
- #                           - precpu.get("system_cpu_usage", 0))
- #           num_cpus = len(cpu.get("cpu_usage", {}).get("percpu_usage", [1]))
- #           if system_delta > 0:
- #               cpu_percent = round((cpu_delta / system_delta) * num_cpus * 100.0, 1)
- #           else:
- #               cpu_percent = 0.0
- #   
- #           return ram_mb, cpu_percent
- #       except Exception as exc:  # pylint: disable=broad-except
- #           print(f"[DockerSource] Could not fetch stats for {container_id}: {exc}", file=sys.stderr)
- #           return 0, 0.0
-
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
+    # pylint: disable-next=too-many-locals
     def _container_to_record(self, cid: str, host_name: str, host_ncpu: int) -> VM:
         """Convert a Docker container ID to a :class:`~sources.base.VM`.
 
@@ -189,7 +149,7 @@ class DockerSource(BaseSource):
         # uid: hostname + container name. The name alone is not unique
         # if the same container name runs on multiple Docker hosts.
         uid = _sanitize_label(f"{host_name}__{name}")
-        
+
         # nano = details.get("HostConfig", {}).get("NanoCpus", 0)
         # cpus = int(nano / 1_000_000_000) if nano else -1
         nano = details.get("HostConfig", {}).get("NanoCpus", 0)
@@ -237,7 +197,6 @@ class DockerSource(BaseSource):
         Returns:
             A list of :class:`~sources.base.VM` instances, one per running container.
         """
-        import time
         self._log(f"connecting to {self.host}")
         t0 = time.monotonic()
         host_name, host_ncpu = self._host_info()
@@ -258,4 +217,3 @@ class DockerSource(BaseSource):
         duration = time.monotonic() - t0
         self._log(f"collected {len(vms)} containers in {duration:.3f}s")
         return vms
-

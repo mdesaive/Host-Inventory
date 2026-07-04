@@ -2,7 +2,9 @@
 
 Usage::
 
-    python main.py --source docker|vmware \n        --output csv-vms|csv-networks|prometheus-vms|prometheus-networks \n        --host <host>
+    python main.py --source docker|vmware \n
+    --output csv-vms|csv-networks|prometheus-vms|prometheus-networks \n
+    --host <host>
 
 Run ``python main.py --help`` for a full list of options.
 """

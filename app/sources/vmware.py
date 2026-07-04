@@ -4,8 +4,8 @@ Fetches VM metadata from a vCenter or vcsim instance using pyVmomi.
 """
 
 import sys
-import re
 import ssl
+import time
 from urllib.parse import urlparse
 
 from pyVim.connect import Disconnect, SmartConnect
@@ -150,7 +150,7 @@ class VMwareSource(BaseSource):
             state = "unknown"
         try:
             cpu_usage_mhz = vm.summary.quickStats.overallCpuUsage or 0
-        except Exception: # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             cpu_usage_mhz = 0
         devices = cfg.hardware.device or []
         disks = [d for d in devices if isinstance(d, vim.vm.device.VirtualDisk)]
@@ -187,7 +187,6 @@ class VMwareSource(BaseSource):
         Returns:
             A list of :class:`~sources.base.VM` instances.
         """
-        import time
         self._log(f"connecting to {self.host}")
         t0 = time.monotonic()
         vms: list[VM] = []
@@ -229,4 +228,3 @@ class VMwareSource(BaseSource):
         duration = time.monotonic() - t0
         self._log(f"collected {len(vms)} VMs in {duration:.3f}s")
         return vms
-
