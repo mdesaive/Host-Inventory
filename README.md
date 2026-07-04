@@ -24,9 +24,9 @@ outputs it either as CSV or in Prometheus Textfile Collector format.
 - **A Docker Compose setup** is included. This provides in one container a
   scrape endpoint to Prometheus and implements in one or more sidecar
   containers the Python code which performs the API calls to the
-  infrastructure backends. This way the frequency and time of the possibly
-  costy API calls can explicitely be controlled in the sidecar containers.
-  Independent of the Prometheus scrape intervalls.
+  infrastructure backends. This way the **frequency and time of the possibly
+  costy API calls can explicitely be controlled in the sidecar containers**.
+  **Independent of the Prometheus scrape intervalls**.
 
 ---
 
