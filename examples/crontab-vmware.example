@@ -1,2 +1,2 @@
-15 1 * * * python /app/main.py --source vmware -o "/textfiles/${INV_PROM_FILE_CHEAP}" --output prometheus --host ${INV_HOST} --username ${INV_USERNAME} --password-file /run/secrets/vmware_password --no-verify-ssl
+10 */2 * * * python /app/main.py --source vmware -o "/textfiles/${INV_PROM_FILE_CHEAP}" --output prometheus --host ${INV_HOST} --username ${INV_USERNAME} --password-file /run/secrets/vmware_password --no-verify-ssl
 
