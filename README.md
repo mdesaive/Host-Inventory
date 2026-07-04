@@ -179,11 +179,11 @@ networks - useful to plan network setup for new infrastructure hosts.
 
 Ready-to-import dashboard JSONs are in `grafana/`:
 
-- `dashboard_grafana_12_vms_extended_with_sums_and_nets.json` — inventory
+- `dashboard_grafana_12_vms_extended.json` — inventory
   table plus sum stats (CPU, RAM, storage) and a per-network VM count panel
 - `dashboard_grafana_12_networks.json` — network attachment overview based
   on `vm_network_attachment`
-- `dashboard_grafana_12_vms.json` — basic VM inventory table; superseded by
+- `dashboard_grafana_12_vms_minimal.json` — basic VM inventory table; superseded by
   the extended version, kept for reference
 
 Import via Dashboards → Import (or paste into an existing dashboard's
