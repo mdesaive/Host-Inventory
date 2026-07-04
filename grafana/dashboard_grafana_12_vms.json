@@ -400,10 +400,10 @@
         "allowCustomValue": false,
         "current": {
           "text": [
-            "unknown"
+            "running"
           ],
           "value": [
-            "unknown"
+            "running"
           ]
         },
         "definition": "label_values(vm_inventory_state_info,state)",
@@ -429,7 +429,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Demo-Host-Inventory",
+  "title": "*** Host-Inventory-VMs",
   "uid": "add7g7t",
-  "version": 40
+  "version": 41
 }
