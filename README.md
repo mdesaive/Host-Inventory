@@ -26,6 +26,7 @@ outputs it either as CSV or in Prometheus Textfile Collector format.
   containers the Python code which performs the API calls to the 
   infrastructure backends. This way the frequency and time of the possibly
   costy API calls can explicitely be controlled in the sidecar containers.
+
 ---
  
 ## Project structure
@@ -149,6 +150,7 @@ docker compose exec <sidecar container name> sh -c 'python /app/main.py \
 ```
 
 The environment variables are already set inside the container. 
+
 ---
  
 ## Environment variables (env_files)
