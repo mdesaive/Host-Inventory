@@ -1,0 +1,2 @@
+INV_HOST=http://<hostname or ip>:2375
+INV_PROM_FILE_CHEAP=docker_cheap.prom

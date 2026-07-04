@@ -3,6 +3,7 @@
 Fetches VM metadata from a vCenter or vcsim instance using pyVmomi.
 """
 
+import sys
 import re
 import ssl
 from urllib.parse import urlparse
@@ -215,10 +216,10 @@ class VMwareSource(BaseSource):
                 try:
                     vms.append(self._vm_to_record(vm))
                 except Exception as exc:  # pylint: disable=broad-except
-                    print(f"[VMwareSource] Skipping VM: {exc}")
+                    print(f"[VMwareSource] Skipping VM: {exc}", file=sys.stderr)
 
         except Exception as exc:  # pylint: disable=broad-except
-            print(f"[VMwareSource] Connection error: {exc}")
+            print(f"[VMwareSource] Connection error: {exc}", file=sys.stderr)
         finally:
             if service_instance is not None:
                 try:

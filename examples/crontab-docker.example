@@ -1,0 +1,1 @@
+15 2 * * *  python /app/main.py --source docker --output prometheus -o "/textfiles/${INV_PROM_FILE_CHEAP}" --host ${INV_HOST}

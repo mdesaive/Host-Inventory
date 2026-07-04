@@ -4,6 +4,7 @@ Fetches VM metadata from a Docker daemon reachable via TCP.
 Uses only Python standard library (urllib, json).
 """
 
+import sys
 import json
 import ssl
 import urllib.error
@@ -69,7 +70,7 @@ class DockerSource(BaseSource):
             info = self._get("/info")
             return str(info.get("Name", "unknown"))
         except Exception as exc:  # pylint: disable=broad-except
-            print(f"[DockerSource] Could not fetch /info: {exc}")
+            print(f"[DockerSource] Could not fetch /info: {exc}", file=sys.stderr)
             return "unknown"
 
     def _container_stats(self, container_id: str) -> tuple:
@@ -99,7 +100,7 @@ class DockerSource(BaseSource):
     
             return ram_mb, cpu_percent
         except Exception as exc:  # pylint: disable=broad-except
-            print(f"[DockerSource] Could not fetch stats for {container_id}: {exc}")
+            print(f"[DockerSource] Could not fetch stats for {container_id}: {exc}", file=sys.stderr)
             return 0, 0.0
 
     # ------------------------------------------------------------------
@@ -171,14 +172,14 @@ class DockerSource(BaseSource):
         try:
             containers = self._get("/containers/json")
         except Exception as exc:  # pylint: disable=broad-except
-            print(f"[DockerSource] Could not list containers: {exc}")
+            print(f"[DockerSource] Could not list containers: {exc}", file=sys.stderr)
             return vms
 
         for container in containers:
             try:
                 vms.append(self._container_to_record(container["Id"], host_name))
             except Exception as exc:  # pylint: disable=broad-except
-                print(f"[DockerSource] Skipping container {container.get('Id', '?')}: {exc}")
+                print(f"[DockerSource] Skipping container {container.get('Id', '?')}: {exc}", file=sys.stderr)
 
         duration = time.monotonic() - t0
         self._log(f"collected {len(vms)} containers in {duration:.3f}s")

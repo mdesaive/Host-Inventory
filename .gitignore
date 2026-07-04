@@ -1,6 +1,19 @@
-*.prom
-ps
-.env
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Secrets
+secrets/
+
+# Produktive Konfiguration
 compose.yaml
-textfile
-secrets
+env_files/
+crontabs/
+textfiles/
+
+# Temporäre Dateien
+*.tmp
+*.log
+deploy/
+ps/

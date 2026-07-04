@@ -11,6 +11,7 @@ Metric structure:
 import re
 import sys
 from sources.base import VM
+from typing import IO, Optional
 
 
 # Stable identity labels — never change for a given VM.
@@ -92,6 +93,7 @@ def _emit_metric_block(
     metric_name: str,
     help_text: str,
     lines: list[str],
+    file: Optional[IO[str]] = None,
 ) -> None:
     """Write a complete metric block (HELP, TYPE, data lines) to stdout.
 
@@ -100,14 +102,14 @@ def _emit_metric_block(
         help_text: Human-readable description for the HELP line.
         lines: Pre-formatted exposition lines (without trailing newline).
     """
-    out = sys.stdout
+    out = file or sys.stdout
     print(f"# HELP {metric_name} {help_text}", file=out)
     print(f"# TYPE {metric_name} gauge", file=out)
     for line in lines:
         print(line, file=out)
 
 
-def write_prometheus(vms: list[VM]) -> None:
+def write_prometheus(vms: list[VM], file: Optional[IO[str]] = None) -> None:
     """Write VM metrics in Prometheus exposition format (0.0.4) to stdout.
 
     Emits three categories of metrics:
@@ -130,6 +132,7 @@ def write_prometheus(vms: list[VM]) -> None:
         "vm_inventory_info",
         "Stable identity metric for VM inventory",
         lines,
+        file=file,
     )
 
     # --- 2. Mutable string info metrics ---
@@ -139,7 +142,7 @@ def write_prometheus(vms: list[VM]) -> None:
             f"{metric_name}{{{_build_label_str(vm, (field,))}}} 1"
             for vm in vms
         ]
-        _emit_metric_block(metric_name, help_text, lines)
+        _emit_metric_block(metric_name, help_text, lines, file=file)
 
     # --- 3. Numeric gauges ---
     for metric_name, vm_field, help_text in _GAUGE_METRICS:
@@ -147,5 +150,5 @@ def write_prometheus(vms: list[VM]) -> None:
             f"{metric_name}{{{_build_label_str(vm)}}} {getattr(vm, vm_field)}"
             for vm in vms
         ]
-        _emit_metric_block(metric_name, help_text, lines)
+        _emit_metric_block(metric_name, help_text, lines, file=file)
 
