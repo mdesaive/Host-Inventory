@@ -21,7 +21,7 @@ outputs it either as CSV or in Prometheus Textfile Collector format.
   planning.
 - **Prometheus output** is intended for continuous monitoring and Grafana
   dashboards.
-- A docker compose setup is included. This provides in one container a 
+- **A docker compose setup** is included. This provides in one container a 
   scrape endpoint to Prometheus and implements in one or more sidecar
   containers the Python code which performs the API calls to the 
   infrastructure backends. This way the frequency and time of the possibly
