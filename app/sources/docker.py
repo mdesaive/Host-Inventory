@@ -60,18 +60,32 @@ class DockerSource(BaseSource):
             return json.loads(response.read().decode())
             # json.loads creates dictionary from json. <3
 
-    def _host_name(self) -> str:
-        """Return the Docker daemon's reported hostname.
+    def _host_info(self) -> tuple[str, int]:
+        """Return the Docker daemon's reported hostname and CPU count.
 
         Returns:
-            The ``Name`` field from ``/info``, or ``"unknown"`` on error.
+            Tuple of (``Name``, ``NCPU``) from ``/info``, or
+            ``("unknown", 0)`` on error.
         """
         try:
             info = self._get("/info")
-            return str(info.get("Name", "unknown"))
+            return str(info.get("Name", "unknown")), int(info.get("NCPU", 0))
         except Exception as exc:  # pylint: disable=broad-except
             print(f"[DockerSource] Could not fetch /info: {exc}", file=sys.stderr)
-            return "unknown"
+            return "unknown", 0
+
+#     def _host_name(self) -> str:
+#         """Return the Docker daemon's reported hostname.
+# 
+#         Returns:
+#             The ``Name`` field from ``/info``, or ``"unknown"`` on error.
+#         """
+#         try:
+#             info = self._get("/info")
+#             return str(info.get("Name", "unknown"))
+#         except Exception as exc:  # pylint: disable=broad-except
+#             print(f"[DockerSource] Could not fetch /info: {exc}", file=sys.stderr)
+#             return "unknown"
 
     def _container_stats(self, container_id: str) -> tuple:
         """Fetch RAM usage in MB and CPU percent for a container.
@@ -144,12 +158,13 @@ class DockerSource(BaseSource):
     # Public API
     # ------------------------------------------------------------------
 
-    def _container_to_record(self, cid: str, host_name: str) -> VM:
+    def _container_to_record(self, cid: str, host_name: str, host_ncpu: int) -> VM:
         """Convert a Docker container ID to a :class:`~sources.base.VM`.
 
         Args:
             cid: Docker container ID.
             host_name: Pre-fetched Docker daemon hostname.
+            host_ncpu: Number of CPU threads of the Docker host (0 if unknown).
 
         Returns:
             Populated :class:`~sources.base.VM` instance.
@@ -161,8 +176,17 @@ class DockerSource(BaseSource):
         # uid: hostname + container name. The name alone is not unique
         # if the same container name runs on multiple Docker hosts.
         uid = _sanitize_label(f"{host_name}__{name}")
+        
+        # nano = details.get("HostConfig", {}).get("NanoCpus", 0)
+        # cpus = int(nano / 1_000_000_000) if nano else -1
         nano = details.get("HostConfig", {}).get("NanoCpus", 0)
-        cpus = int(nano / 1_000_000_000) if nano else -1
+        if nano:
+            cpus = nano / 1_000_000_000  # float, z.B. 0.5 oder 1.5
+        elif host_ncpu > 0:
+            cpus = float(host_ncpu)  # kein Limit: Obergrenze = alle Host-Threads
+        else:
+            cpus = -1.0  # /info fehlgeschlagen, keine Abschätzung möglich
+
         ram_mb, cpu_percent = self._container_stats(cid)
         nets = list(details.get("NetworkSettings", {}).get("Networks", {}).keys())
         mounts = details.get("Mounts", [])
@@ -203,7 +227,7 @@ class DockerSource(BaseSource):
         import time
         self._log(f"connecting to {self.host}")
         t0 = time.monotonic()
-        host_name = self._host_name()
+        host_name, host_ncpu = self._host_info()
         vms: list[VM] = []
 
         try:
@@ -214,7 +238,7 @@ class DockerSource(BaseSource):
 
         for container in containers:
             try:
-                vms.append(self._container_to_record(container["Id"], host_name))
+                vms.append(self._container_to_record(container["Id"], host_name, host_ncpu))
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"[DockerSource] Skipping container {container.get('Id', '?')}: {exc}", file=sys.stderr)
 

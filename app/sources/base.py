@@ -101,7 +101,9 @@ class VM:
         source_type: Is it Docker or VMWare resource.
         host: Hostname of the node or ESXi host.
         name: Name of the container or VM.
-        cpus: CPU count; -1 means unlimited (Docker with no CPU limit).
+        cpus: CPU count (vCPUs for VMware, CPU limit for Docker; unlimited
+    containers are estimated with the host's thread count).
+    -1 means the value could not be determined.
         ram_mb: RAM in MB; provisioned (VMware) or current usage (Docker).
         volumes: Comma-separated list of mount paths (Docker) or
                  name:sizeGB pairs (VMware).
@@ -126,7 +128,7 @@ class VM:
     host: str
     name: str
     state: str
-    cpus: int
+    cpus: float
     cpu_usage_mhz: int       # VMware: overallCpuUsage, Docker: 0
     cpu_usage_percent: float # Docker: CPU%, VMware: 0.0
     ram_mb: int

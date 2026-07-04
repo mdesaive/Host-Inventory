@@ -1,0 +1,897 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 15,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(\n  (vm_inventory_cpus{source_type=~\"$source_type\", host=~\"$host\"} >= 0)\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n)",
+          "instant": true,
+          "legendFormat": "CPUs",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Sum CPUs",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(\n  (vm_inventory_cpu_usage_mhz{source_type=\"vmware\", source_type=~\"$source_type\", host=~\"$host\"} >= 0)\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n)",
+          "instant": true,
+          "legendFormat": "CPU MHz",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Sum CPU MHz (VMware)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(\n  (vm_inventory_cpu_usage_percent{source_type=\"docker\", source_type=~\"$source_type\", host=~\"$host\"} >= 0)\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n)",
+          "instant": true,
+          "legendFormat": "CPU %",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Sum CPU % (Docker)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "mbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(\n  vm_inventory_ram_mb{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n)",
+          "instant": true,
+          "legendFormat": "RAM",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Sum RAM",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "gbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(\n  (vm_inventory_volumes_capacity_gb{source_type=~\"$source_type\", host=~\"$host\"} >= 0)\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n)",
+          "instant": true,
+          "legendFormat": "Storage",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Sum Storage",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 23,
+        "x": 0,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "VMs"
+          }
+        ]
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count by (network) (\n  max by (network, uid, source_type) (\n    vm_network_attachment{source_type=~\"$source_type\", host=~\"$host\"}\n    * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n    * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  )\n)",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Networks (filtered VMs)",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "VMs",
+              "network": "Network"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "volumes_capacity_total_gb"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 73
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "annotation"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 247
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "uid"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 261
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cpus"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "-1": {
+                        "color": "text",
+                        "index": 0,
+                        "text": "n.a."
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "volumes_capacity"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "-1": {
+                        "color": "text",
+                        "index": 0,
+                        "text": "n.a."
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 30,
+        "w": 23,
+        "x": 0,
+        "y": 9
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "cpu_percent"
+          }
+        ]
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_info{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left(name)         vm_inventory_name_info\n  * on(uid, source_type) group_left(networks)      vm_inventory_networks_info\n  * on(uid, source_type) group_left(volumes)       vm_inventory_volumes_info\n  * on(uid, source_type) group_left(annotation)            vm_inventory_annotation_info\n  * on(uid, source_type) group_left(migration_batch)       vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left(migration_status)      vm_inventory_migration_status_info\n  * on(uid, source_type) group_left(migration_stakeholder)vm_inventory_migration_stakeholder_info\n  * on(uid, source_type) group_left(migration_os_contact)  vm_inventory_migration_os_contact_info\n  * on(uid, source_type) group_left(migration_target)      vm_inventory_migration_target_info\n  * on(uid, source_type) group_left(migration_notes)       vm_inventory_migration_notes_info\n  * on(uid, source_type) group_left(state) vm_inventory_state_info{state=~\"$state\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_cpus{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_cpu_usage_mhz{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_cpu_usage_percent{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_volumes_count{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_volumes_capacity_gb{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_ram_mb{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "G"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_migration_difficulty{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "H"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_migration_downtime_impact{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "I"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_state_info{source_type=~\"$source_type\", host=~\"$host\", state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "J"
+        }
+      ],
+      "title": "Instances",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "valueLabel": "uid"
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #A": true,
+              "Value #J": true,
+              "instance": true,
+              "job": true,
+              "state": false,
+              "uid": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Time": 2,
+              "Value #A": 9,
+              "Value #B": 11,
+              "Value #C": 12,
+              "Value #D": 13,
+              "Value #E": 14,
+              "Value #F": 15,
+              "Value #G": 10,
+              "Value #H": 16,
+              "Value #I": 17,
+              "Value #J": 8,
+              "host": 3,
+              "instance": 4,
+              "job": 5,
+              "name": 6,
+              "source_type": 0,
+              "state": 7,
+              "uid": 1
+            },
+            "renameByName": {
+              "Value #A": "base",
+              "Value #B": "cpus",
+              "Value #C": "cpus_mhz",
+              "Value #D": "cpu_percent",
+              "Value #E": "number_volumes",
+              "Value #F": "volumes_capacity",
+              "Value #G": "ram_mb",
+              "Value #H": "Difficulty",
+              "Value #I": "Downtime Impact",
+              "Value #J": "Status",
+              "source_type": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 42,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "definition": "label_values(vm_inventory_info,host)",
+        "description": "",
+        "includeAll": true,
+        "label": "host",
+        "name": "host",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_v "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "definition": "label_values(vm_inventory_info,source_type)",
+        "includeAll": true,
+        "label": "source_type",
+        "name": "source_type",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(vm_inventory_info,source_type)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "definition": "label_values(vm_inventory_migration_batch_info,migration_batch)",
+        "includeAll": true,
+        "label": "batch",
+        "name": "batch",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(vm_inventory_migration_batch_info,migration_batch)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "allowCustomValue": false,
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "definition": "label_values(vm_inventory_state_info,state)",
+        "includeAll": true,
+        "label": "state",
+        "name": "state",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(vm_inventory_state_info,state)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "*** Host-Inventory-VMs",
+  "uid": "add7g7t",
+  "version": 45
+}
