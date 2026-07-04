@@ -16,7 +16,7 @@ outputs it either as CSV or in Prometheus Textfile Collector format.
  
 - API calls are categorised as *cheap* (frequent) or *expensive* (infrequent).
   Currently all calls are cheap; expensive is reserved as an extension point
-  for future host-level data collection.
+  for future more in depth data collection.
 - **CSV output** is intended for manual, interactive queries and migration
   planning.
 - **Prometheus output** is intended for continuous monitoring and Grafana
