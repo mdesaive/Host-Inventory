@@ -92,6 +92,9 @@ Keys, VM fields and Prometheus labels are identical by convention
 
 Rules:
 
+- The `[INVENTORY: ...]` block must be at the very **beginning** of the
+  annotation. Any text (or blank line) before it disables parsing and the
+  entire annotation is kept as free text.
 - Key/value pairs are separated by `;` — values must therefore not contain
   semicolons. Spaces in values are fine.
 - Unknown keys are ignored. If **no** known key is found, the entire block
