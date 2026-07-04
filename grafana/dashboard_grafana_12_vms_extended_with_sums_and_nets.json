@@ -575,7 +575,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "cpu_percent"
+            "displayName": "info_downtime_impact"
           }
         ]
       },
@@ -814,8 +814,7 @@
       {
         "allowCustomValue": false,
         "current": {
-          "te },
-        "definition": "label_values(vm_inventory_info,host)",
+            "definition": "label_values(vm_inventory_info,host)",
         "description": "",
         "includeAll": true,
         "label": "host",
@@ -903,5 +902,5 @@
   "timezone": "browser",
   "title": "*** Host-Inventory-VMs",
   "uid": "add7g7t",
-  "version": 52
+  "version": 53
 }
