@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 15,
+  "id": 0,
   "links": [],
   "panels": [
     {
@@ -390,7 +390,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 8,
         "w": 23,
         "x": 0,
         "y": 4
@@ -566,7 +566,7 @@
         "h": 30,
         "w": 23,
         "x": 0,
-        "y": 9
+        "y": 12
       },
       "id": 1,
       "options": {
@@ -588,7 +588,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "vm_inventory_info{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left(name)         vm_inventory_name_info\n  * on(uid, source_type) group_left(networks)      vm_inventory_networks_info\n  * on(uid, source_type) group_left(volumes)       vm_inventory_volumes_info\n  * on(uid, source_type) group_left(annotation)            vm_inventory_annotation_info\n  * on(uid, source_type) group_left(migration_batch)       vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left(migration_status)      vm_inventory_migration_status_info\n  * on(uid, source_type) group_left(migration_stakeholder)vm_inventory_migration_stakeholder_info\n  * on(uid, source_type) group_left(migration_os_contact)  vm_inventory_migration_os_contact_info\n  * on(uid, source_type) group_left(migration_target)      vm_inventory_migration_target_info\n  * on(uid, source_type) group_left(migration_notes)       vm_inventory_migration_notes_info\n  * on(uid, source_type) group_left(state) vm_inventory_state_info{state=~\"$state\"}",
+          "expr": "vm_inventory_info{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left(networks)      vm_inventory_networks_info\n  * on(uid, source_type) group_left(volumes)       vm_inventory_volumes_info\n  * on(uid, source_type) group_left(annotation)            vm_inventory_annotation_info\n  * on(uid, source_type) group_left(migration_batch)       vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left(migration_status)      vm_inventory_migration_status_info\n  * on(uid, source_type) group_left(migration_stakeholder) vm_inventory_migration_stakeholder_info\n  * on(uid, source_type) group_left(migration_os_contact)  vm_inventory_migration_os_contact_info\n  * on(uid, source_type) group_left(migration_target)      vm_inventory_migration_target_info\n  * on(uid, source_type) group_left(migration_notes)       vm_inventory_migration_notes_info\n  * on(uid, source_type) group_left(state) vm_inventory_state_info{state=~\"$state\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -803,8 +803,8 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "text": "brh-tools03",
+          "value": "brh-tools03"
         },
         "definition": "label_values(vm_inventory_info,host)",
         "description": "",
@@ -814,8 +814,8 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_v "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
+          "query": "label_values(vm_inventory_info,host)",
+          "refId": "Promethe     },
         "refresh": 1,
         "regex": "",
         "type": "query"
@@ -886,12 +886,12 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "*** Host-Inventory-VMs",
   "uid": "add7g7t",
-  "version": 45
+  "version": 47
 }
