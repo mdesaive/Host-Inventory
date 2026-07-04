@@ -17,14 +17,15 @@ outputs it either as CSV or in Prometheus Textfile Collector format.
 - API calls are categorised as *cheap* (frequent) or *expensive* (infrequent).
   Currently all calls are cheap; expensive is reserved as an extension point
   for future host-level data collection.
-- One **sidecar container** per host runs the script on a cron schedule and
-  writes `.prom` files to a shared volume.
-- A **node_exporter** container reads those `.prom` files and exposes them
-  to Prometheus.
 - **CSV output** is intended for manual, interactive queries and migration
   planning.
 - **Prometheus output** is intended for continuous monitoring and Grafana
   dashboards.
+- A docker compose setup is included. This provides in one container a 
+  scrape endpoint to Prometheus and implements in one or more sidecar
+  containers the Python code which performs the API calls to the 
+  infrastructure backends. This way the frequency and time of the possibly
+  costy API calls can explicitely be controlled in the sidecar containers.
 ---
  
 ## Project structure
@@ -102,7 +103,11 @@ networks — useful for identifying migration groups that must move together.
 ---
  
 ## Docker Compose setup
- 
+- One **sidecar container** per host runs the script on a cron schedule and
+  writes `.prom` files to a shared volume.
+- A **node_exporter** container reads those `.prom` files and exposes them
+  to Prometheus.
+
 ### 1. Copy and edit example files
  
 ```bash
@@ -139,11 +144,8 @@ docker compose logs -f
 To run a collection immediately without waiting for the next cron trigger:
 
 ```bash
-docker compose exec sidecar-docker python /app/main.py \
-    --source docker \
-    --output prometheus \
-    --host "${INV_HOST}" \
-    -o "/textfiles/${INV_PROM_FILE_CHEAP}"
+docker compose exec <sidecar container name> sh -c 'python /app/main.py \
+  <parameters - refer to crontab examples.>
 ```
 
 The environment variables are already set inside the container. 
