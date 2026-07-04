@@ -101,7 +101,7 @@ The `csv-networks` output produces one row per VM and network in long
 format. Open it in LibreOffice Calc or Excel and create a pivot table
 (Insert → Pivot Table) with VM name and host as row fields and network
 as the column field. This gives you a matrix showing which VMs share
-networks — useful for identifying migration groups that must move together. 
+networks - useful to plan network setup for new infrastructure hosts.. 
 
 ---
  
