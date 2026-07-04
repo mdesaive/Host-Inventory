@@ -67,20 +67,21 @@ examples/               Example configuration files
 All VMs as CSV:
  
 ```bash
-python app/main.py --source docker --output csv-vms --host http://10.0.40.11:2375
+python app/main.py --source docker --output csv-vms --host http://<host name or IP>:2375
 ```
  
 Network attachments as CSV (long format, suitable for pivot tables):
  
 ```bash
-python app/main.py --source docker --output csv-networks --host http://10.0.40.11:2375
+python app/main.py --source docker --output csv-networks --host http://<host name or IP>:2375
 ```
  
 VMware against vcsim:
+There is an awsome VCenter simulator Docker image available. Check vmware/vcsim.
  
 ```bash
 python app/main.py --source vmware --output csv-vms \
-    --host https://localhost:8989 \
+    --host https://<VCSimulator host name or IP>:8989 \
     --username user --password pass --no-verify-ssl
 ```
  
