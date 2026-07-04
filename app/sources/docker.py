@@ -113,8 +113,21 @@ class DockerSource(BaseSource):
             num_cpus = (cpu.get("online_cpus")
                         or len(cpu.get("cpu_usage", {}).get("percpu_usage") or [])
                         or 1)
+
+
+            # if cpu_delta <= 0 or system_delta <= 0:
+            #     print(
+            #         f"[DockerSource] DEBUG {container_id[:12]}: "
+            #         f"cpu_delta={cpu_delta} system_delta={system_delta} "
+            #         f"num_cpus={num_cpus} "
+            #         f"pre_total={precpu.get('cpu_usage', {}).get('total_usage', 'MISSING')} "
+            #         f"cur_total={cpu.get('cpu_usage', {}).get('total_usage', 'MISSING')} "
+            #         f"pre_sys={precpu.get('system_cpu_usage', 'MISSING')}",
+            #         file=sys.stderr,
+            #     )
+
             if system_delta > 0 and cpu_delta >= 0:
-                cpu_percent = round((cpu_delta / system_delta) * num_cpus * 100.0, 1)
+                cpu_percent = round((cpu_delta / system_delta) * num_cpus * 100.0, 2)
             else:
                 cpu_percent = 0.0
 
