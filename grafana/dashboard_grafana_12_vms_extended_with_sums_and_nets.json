@@ -493,7 +493,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "annotation"
+              "options": "info_annotation"
             },
             "properties": [
               {
@@ -588,7 +588,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "vm_inventory_info{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left(networks)      vm_inventory_networks_info\n  * on(uid, source_type) group_left(volumes)       vm_inventory_volumes_info\n  * on(uid, source_type) group_left(annotation)            vm_inventory_annotation_info\n  * on(uid, source_type) group_left(migration_batch)       vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left(migration_status)      vm_inventory_migration_status_info\n  * on(uid, source_type) group_left(migration_stakeholder) vm_inventory_migration_stakeholder_info\n  * on(uid, source_type) group_left(migration_os_contact)  vm_inventory_migration_os_contact_info\n  * on(uid, source_type) group_left(migration_target)      vm_inventory_migration_target_info\n  * on(uid, source_type) group_left(migration_notes)       vm_inventory_migration_notes_info\n  * on(uid, source_type) group_left(state) vm_inventory_state_info{state=~\"$state\"}",
+          "expr": "vm_inventory_info{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left(networks)      vm_inventory_networks_info\n  * on(uid, source_type) group_left(volumes)       vm_inventory_volumes_info\n  * on(uid, source_type) group_left(info_annotation)        vm_inventory_info_annotation\n  * on(uid, source_type) group_left(migration_batch)       vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left(migration_status)      vm_inventory_migration_status_info\n  * on(uid, source_type) group_left(info_stakeholder)      vm_inventory_info_stakeholder\n  * on(uid, source_type) group_left(info_os_contact)       vm_inventory_info_os_contact\n  * on(uid, source_type) group_left(migration_target)      vm_inventory_migration_target_info\n  * on(uid, source_type) group_left(migration_notes)       vm_inventory_migration_notes_info\n  * on(uid, source_type) group_left(state) vm_inventory_state_info{state=~\"$state\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -707,7 +707,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "vm_inventory_migration_downtime_impact{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
+          "expr": "vm_inventory_info_downtime_impact{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -765,19 +765,19 @@
               "Value #E": 15,
               "Value #F": 14,
               "Value #G": 10,
-              "Value #H": 18,
-              "Value #I": 19,
+              "Value #H": 24,
+              "Value #I": 20,
               "Value #J": 8,
-              "annotation": 20,
               "host": 3,
+              "info_annotation": 21,
+              "info_os_contact": 19,
+              "info_stakeholder": 18,
               "instance": 4,
               "job": 5,
-              "migration_batch": 21,
-              "migration_notes": 22,
-              "migration_os_contact": 23,
-              "migration_stakeholder": 24,
-              "migration_status": 25,
-              "migration_target": 26,
+              "migration_batch": 22,
+              "migration_notes": 26,
+              "migration_status": 23,
+              "migration_target": 25,
               "name": 6,
               "networks": 17,
               "source_type": 0,
@@ -794,10 +794,11 @@
               "Value #F": "volumes_capacity",
               "Value #G": "ram_mb",
               "Value #H": "migration_difficulty",
-              "Value #I": "downtime_impact",
+              "Value #I": "info_downtime_impact",
               "Value #J": "Status",
               "migration_batch": "",
-              "source_type": ""
+              "source_type": "",
+              "volumes": ""
             }
           }
         }
@@ -813,7 +814,8 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "brh-  "definition": "label_values(vm_inventory_info,host)",
+          "te },
+        "definition": "label_values(vm_inventory_info,host)",
         "description": "",
         "includeAll": true,
         "label": "host",
@@ -894,12 +896,12 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "*** Host-Inventory-VMs",
   "uid": "add7g7t",
-  "version": 48
+  "version": 52
 }

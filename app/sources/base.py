@@ -26,29 +26,31 @@ _INVENTORY_BLOCK_PATTERN = re.compile(
 )
 _KV_PATTERN = re.compile(r"^([a-z_]+)=(.+)$")
 
-# Maps short keys used in the [INVENTORY: ...] block to VM field names.
+# Maps keys used in the [INVENTORY: ...] block to VM field names.
+# By convention, keys are identical to VM field names and Prometheus
+# label names (full symmetry from annotation to dashboard).
 _INVENTORY_KEY_MAP: dict[str, str] = {
-    "batch": "migration_batch",
-    "status": "migration_status",
-    "difficulty": "migration_difficulty",
-    "downtime_impact": "migration_downtime_impact",
-    "stakeholder": "migration_stakeholder",
-    "os_contact": "migration_os_contact",
-    "target": "migration_target",
-    "notes": "migration_notes",
+    # migration planning fields
+    "migration_batch": "migration_batch",
+    "migration_status": "migration_status",
+    "migration_difficulty": "migration_difficulty",
+    "migration_target": "migration_target",
+    "migration_notes": "migration_notes",
+    # general resource info fields
+    "info_downtime_impact": "info_downtime_impact",
+    "info_stakeholder": "info_stakeholder",
+    "info_os_contact": "info_os_contact",
 }
 
 # Fields that should be parsed as int; default 0 if missing/invalid.
-_INT_FIELDS = ("migration_difficulty", "migration_downtime_impact")
-
+_INT_FIELDS = ("migration_difficulty", "info_downtime_impact")
 
 def parse_annotation(raw: str) -> tuple[dict[str, object], str]:
     """Split a VM annotation into structured migration fields and free text.
 
     Recognises an optional leading block of the form::
 
-        [INVENTORY: batch=2; status=planned; difficulty=3; ...]
-
+    [INVENTORY: migration_batch=2; migration_status=planned; info_stakeholder=jdoe; ...]
     Everything after this block (or the entire annotation if no such block
     is present) is treated as free text. Other bracketed content that does
     not match this exact pattern (e.g. "[TODO] ...") is left untouched and
@@ -136,13 +138,13 @@ class VM:
     volumes_capacity_total_gb: int
     volumes: str
     networks: str
-    annotation: str = ""
+    info_annotation: str = ""
     migration_batch: str = ""
     migration_status: str = ""
     migration_difficulty: int = 0
-    migration_downtime_impact: int = 0
-    migration_stakeholder: str = ""
-    migration_os_contact: str = ""
+    info_downtime_impact: int = 0
+    info_stakeholder: str = ""
+    info_os_contact: str = ""
     migration_target: str = ""
     migration_notes: str = ""
 

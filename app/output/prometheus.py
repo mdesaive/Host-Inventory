@@ -20,34 +20,34 @@ from typing import IO, Optional
 # are still carried as separate labels for display and filtering.
 _STABLE_LABELS: tuple[str, ...] = ("uid", "source_type", "host", "name")
 
-# Mutable string fields — each gets its own info metric
-_MUTABLE_INFO_FIELDS: tuple[tuple[str, str], ...] = (
-    ("state",                 "Current power/run state of the VM"),
-    ("volumes",                "Current volumes attached to the VM"),
-    ("networks",               "Current networks attached to the VM"),
-    ("annotation",             "Free-text annotation"),
-    ("migration_batch",        "Migration phase/wave"),
-    ("migration_status",       "Migration status"),
-    ("migration_stakeholder",  "Downtime coordination contact"),
-    ("migration_os_contact",   "Guest OS contact"),
-    ("migration_target",       "Migration target host/cluster"),
-    ("migration_notes",        "Migration-specific notes"),
+# Mutable string fields — each gets its own info metric.
+# Columns: (metric name, VM field / label name, HELP text)
+_MUTABLE_INFO_FIELDS: tuple[tuple[str, str, str], ...] = (
+    ("vm_inventory_state_info",            "state",             "Current power/run state of the VM"),
+    ("vm_inventory_volumes_info",          "volumes",           "Current volumes attached to the VM"),
+    ("vm_inventory_networks_info",         "networks",          "Current networks attached to the VM"),
+    ("vm_inventory_info_annotation",       "info_annotation",   "Free-text annotation"),
+    ("vm_inventory_info_stakeholder",      "info_stakeholder",  "Downtime coordination contact"),
+    ("vm_inventory_info_os_contact",       "info_os_contact",   "Guest OS contact"),
+    ("vm_inventory_migration_batch_info",  "migration_batch",   "Migration phase/wave"),
+    ("vm_inventory_migration_status_info", "migration_status",  "Migration status"),
+    ("vm_inventory_migration_target_info", "migration_target",  "Migration target host/cluster"),
+    ("vm_inventory_migration_notes_info",  "migration_notes",   "Migration-specific notes"),
 )
 
 # Numeric gauges — labels: stable key only
 _GAUGE_METRICS: tuple[tuple[str, str, str], ...] = (
     ("vm_inventory_cpus",                "cpus",                    "Number of CPUs"),
-    ("vm_inventory_ram_mb",             "ram_mb",                  "RAM in megabytes"),
-    ("vm_inventory_cpu_usage_mhz",      "cpu_usage_mhz",           "CPU usage in MHz"),
-    ("vm_inventory_cpu_usage_percent",  "cpu_usage_percent",       "CPU usage in percent"),
-    ("vm_inventory_volumes_count",      "volumes_count",           "Number of attached volumes"),
-    ("vm_inventory_volumes_capacity_gb","volumes_capacity_total_gb","Total volumes capacity in GB"),
+    ("vm_inventory_ram_mb",              "ram_mb",                  "RAM in megabytes"),
+    ("vm_inventory_cpu_usage_mhz",       "cpu_usage_mhz",           "CPU usage in MHz"),
+    ("vm_inventory_cpu_usage_percent",   "cpu_usage_percent",       "CPU usage in percent"),
+    ("vm_inventory_volumes_count",       "volumes_count",           "Number of attached volumes"),
+    ("vm_inventory_volumes_capacity_gb", "volumes_capacity_total_gb", "Total volumes capacity in GB"),
     ("vm_inventory_migration_difficulty", "migration_difficulty",
      "Migration difficulty, 1-5"),
-    ("vm_inventory_migration_downtime_impact", "migration_downtime_impact",
-     "Migration downtime impact, 1-5"),
+    ("vm_inventory_info_downtime_impact", "info_downtime_impact",
+     "Downtime impact, 1-5"),
 )
-
 
 def _escape_label_value(value: str) -> str:
     """Escape a string for safe use as a Prometheus label value.
@@ -134,10 +134,8 @@ def write_prometheus(vms: list[VM], file: Optional[IO[str]] = None) -> None:
         lines,
         file=file,
     )
-
     # --- 2. Mutable string info metrics ---
-    for field, help_text in _MUTABLE_INFO_FIELDS:
-        metric_name = f"vm_inventory_{field}_info"
+    for metric_name, field, help_text in _MUTABLE_INFO_FIELDS:
         lines = [
             f"{metric_name}{{{_build_label_str(vm, (field,))}}} 1"
             for vm in vms

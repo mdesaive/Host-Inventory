@@ -214,7 +214,7 @@ class DockerSource(BaseSource):
             source_type="docker",
             volumes_count=volumes_count,
             volumes_capacity_total_gb=-1,
-            annotation=_sanitize_label(free_text),
+            info_annotation=_sanitize_label(free_text),
             **migration_fields,
         )
 

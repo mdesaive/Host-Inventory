@@ -173,7 +173,7 @@ class VMwareSource(BaseSource):
             source_type="vmware",
             volumes_count=volumes_count,
             volumes_capacity_total_gb=volumes_capacity_total_gb,
-            annotation=_sanitize_label(free_text),
+            info_annotation=_sanitize_label(free_text),
             **migration_fields,
         )
 
