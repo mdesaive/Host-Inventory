@@ -1017,9 +1017,10 @@
         "type": "query"
       },
       {
+        "allValue": ".*",
         "current": {
-          "text": "internal",
-          "value": "internal"
+          "text": "All",
+          "value": "$__all"
         },
         "definition": "label_values(vm_inventory_info_stakeholder,info_stakeholder)",
         "includeAll": true,
@@ -1045,5 +1046,5 @@
   "timezone": "browser",
   "title": "*** Host-Inventory-VMs",
   "uid": "add7g7t",
-  "version": 58
+  "version": 59
 }
