@@ -938,27 +938,6 @@
           "text": "All",
           "value": "$__all"
         },
-        "definition": "label_values(vm_inventory_info,host)",
-        "description": "",
-        "includeAll": true,
-        "label": "host",
-        "name": "host",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(vm_inventory_info,host)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
-      },
-      {
-        "allowCustomValue": false,
-        "current": {
-          "text": "All",
-          "value": "$__all"
-        },
         "definition": "label_values(vm_inventory_info,source_type)",
         "includeAll": true,
         "label": "source_type",
@@ -974,19 +953,20 @@
         "type": "query"
       },
       {
-        "allValue": ".*",
+        "allowCustomValue": false,
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "text": "brh-tools03",
+          "value": "brh-tools03"
         },
-        "definition": "label_values(vm_inventory_migration_batch_info,migration_batch)",
+        "definition": "label_values(vm_inventory_info,host)",
+        "description": "",
         "includeAll": true,
-        "label": "batch",
-        "name": "batch",
+        "label": "host",
+        "name": "host",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(vm_inventory_migration_batch_info,migration_batch)",
+          "query": "label_values(vm_inventory_info,host)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -1035,6 +1015,26 @@
         "refresh": 1,
         "regex": "",
         "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "definition": "label_values(vm_inventory_migration_batch_info,migration_batch)",
+        "includeAll": true,
+        "label": "batch",
+        "name": "batch",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(vm_inventory_migration_batch_info,migration_batch)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
       }
     ]
   },
@@ -1046,5 +1046,5 @@
   "timezone": "browser",
   "title": "*** Host-Inventory-VMs",
   "uid": "add7g7t",
-  "version": 59
+  "version": 60
 }
