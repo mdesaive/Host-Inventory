@@ -269,6 +269,30 @@
                   },
                   "refId": "J"
                 }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PBFA97CFB590B2093"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "editorMode": "code",
+                      "exemplar": false,
+                      "expr": "vm_inventory_ram_used_mb{source_type=~\"$source_type\", host=~\"$host\"}\r\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\r\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\r\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholder{info_stakeholder=~\"$stakeholder\"}",
+                      "format": "table",
+                      "instant": true,
+                      "legendFormat": "__auto",
+                      "range": false
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "K"
+                }
               }
             ],
             "queryOptions": {},
@@ -305,32 +329,33 @@
                     "includeByName": {},
                     "indexByName": {
                       "Time": 0,
-                      "Value #A": 25,
-                      "Value #B": 7,
-                      "Value #C": 8,
-                      "Value #D": 9,
-                      "Value #E": 10,
-                      "Value #F": 11,
-                      "Value #G": 6,
-                      "Value #H": 20,
-                      "Value #I": 16,
-                      "Value #J": 26,
+                      "Value #A": 26,
+                      "Value #B": 8,
+                      "Value #C": 9,
+                      "Value #D": 10,
+                      "Value #E": 11,
+                      "Value #F": 12,
+                      "Value #G": 7,
+                      "Value #H": 21,
+                      "Value #I": 17,
+                      "Value #J": 27,
+                      "Value #K": 6,
                       "host": 1,
-                      "info_annotation": 17,
-                      "info_os_contact": 15,
-                      "info_stakeholder": 14,
+                      "info_annotation": 18,
+                      "info_os_contact": 16,
+                      "info_stakeholder": 15,
                       "instance": 2,
                       "job": 3,
-                      "migration_batch": 18,
-                      "migration_notes": 22,
-                      "migration_status": 19,
-                      "migration_target": 21,
+                      "migration_batch": 19,
+                      "migration_notes": 23,
+                      "migration_status": 20,
+                      "migration_target": 22,
                       "name": 4,
-                      "networks": 13,
-                      "source_type": 23,
+                      "networks": 14,
+                      "source_type": 24,
                       "state": 5,
-                      "uid": 24,
-                      "volumes": 12
+                      "uid": 25,
+                      "volumes": 13
                     },
                     "renameByName": {
                       "Value #B": "cpus",
@@ -342,6 +367,7 @@
                       "Value #H": "migration_difficulty",
                       "Value #I": "downtime_impact",
                       "Value #J": "status",
+                      "Value #K": "ram_used_mb",
                       "volumes": ""
                     }
                   }
@@ -579,7 +605,13 @@
             },
             "options": {
               "cellHeight": "sm",
-              "showHeader": true
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": true,
+                  "displayName": "Number VMs on Network"
+                }
+              ]
             }
           },
           "version": "13.0.1"
@@ -624,7 +656,7 @@
         "description": "",
         "id": 3,
         "links": [],
-        "title": "Sum RAM (Running VMs)",
+        "title": "Sum RAM Provisioned",
         "vizConfig": {
           "group": "stat",
           "kind": "VizConfig",
@@ -917,6 +949,89 @@
           "version": "13.0.1"
         }
       }
+    },
+    "panel-7": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PBFA97CFB590B2093"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "editorMode": "code",
+                      "exemplar": false,
+                      "expr": "sum(\r\n  vm_inventory_ram_used_mb{source_type=~\"$source_type\", host=~\"$host\"}\r\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\r\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\r\n)",
+                      "instant": true,
+                      "legendFormat": "__auto",
+                      "range": false
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 7,
+        "links": [],
+        "title": "Sum RAM Used",
+        "vizConfig": {
+          "group": "stat",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "fixed"
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "mbytes"
+              },
+              "overrides": []
+            },
+            "options": {
+              "colorMode": "value",
+              "graphMode": "none",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "percentChangeColorMode": "standard",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showPercentChange": false,
+              "textMode": "auto",
+              "wideLayout": true
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
     }
   },
   "layout": {
@@ -928,10 +1043,10 @@
           "spec": {
             "element": {
               "kind": "ElementReference",
-              "name": "panel-3"
+              "name": "panel-7"
             },
             "height": 5,
-            "width": 6,
+            "width": 4,
             "x": 0,
             "y": 0
           }
@@ -941,11 +1056,11 @@
           "spec": {
             "element": {
               "kind": "ElementReference",
-              "name": "panel-4"
+              "name": "panel-3"
             },
             "height": 5,
-            "width": 6,
-            "x": 6,
+            "width": 4,
+            "x": 4,
             "y": 0
           }
         },
@@ -957,7 +1072,20 @@
               "name": "panel-5"
             },
             "height": 5,
-            "width": 6,
+            "width": 4,
+            "x": 8,
+            "y": 0
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-4"
+            },
+            "height": 5,
+            "width": 4,
             "x": 12,
             "y": 0
           }
@@ -970,8 +1098,8 @@
               "name": "panel-6"
             },
             "height": 5,
-            "width": 6,
-            "x": 18,
+            "width": 4,
+            "x": 16,
             "y": 0
           }
         },
@@ -1036,7 +1164,7 @@
     "timezone": "browser",
     "to": "now"
   },
-  "title": "Demo VMWare",
+  "title": "VMWare VMs Table Overview",
   "variables": [
     {
       "kind": "QueryVariable",
@@ -1079,8 +1207,8 @@
       "spec": {
         "allowCustomValue": true,
         "current": {
-          "text": "blnk-esx-10.nms.com",
-          "value": "blnk-esx-10.nms.com"
+          "text": "All",
+          "value": "$__all"
         },
         "definition": "label_values(vm_inventory_info,host)",
         "hide": "dontHide",
