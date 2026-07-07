@@ -232,7 +232,7 @@
         "type": "prometheus",
         "uid": "PBFA97CFB590B2093"
       },
-      "description": "Current memory usage (RSS-like, page cache excluded) at collection time. Docker containers only.",
+      "description": "Current RAM usage (RSS-like, page cache excluded) at collection time. Docker containers only.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -292,6 +292,212 @@
         "x": 0,
         "y": 20
       },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "vm_inventory_ram_used_mb{source_type=\"docker\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholder{info_stakeholder=~\"$stakeholder\"}\nand on(uid, source_type)\ntopk($topn,\n  avg_over_time(vm_inventory_ram_used_mb{source_type=\"docker\", host=~\"$host\"}[$__range] @ end())\n)",
+          "instant": false,
+          "legendFormat": "{{name}} ({{host}})",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "RAM usage current (Docker, top $topn by range average)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "Stacked view of current RAM usage across top $topn containers.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 35,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "mbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 23,
+        "x": 0,
+        "y": 30
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "vm_inventory_ram_used_mb{source_type=\"docker\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholder{info_stakeholder=~\"$stakeholder\"}\nand on(uid, source_type)\ntopk($topn,\n  avg_over_time(vm_inventory_ram_used_mb{source_type=\"docker\", host=~\"$host\"}[$__range] @ end())\n)",
+          "instant": false,
+          "legendFormat": "{{name}} ({{host}})",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "RAM usage current (Docker, stacked, top $topn)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "Current memory usage (RSS-like, page cache excluded) at collection time. Docker containers only.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "mbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 23,
+        "x": 0,
+        "y": 40
+      },
       "id": 2,
       "options": {
         "legend": {
@@ -327,7 +533,7 @@
           "refId": "A"
         }
       ],
-      "title": "RAM usage (Docker, top $topn by range average)",
+      "title": "RAM Max (Docker, top $topn by range average)",
       "type": "timeseries"
     },
     {
@@ -393,7 +599,7 @@
         "h": 10,
         "w": 23,
         "x": 0,
-        "y": 30
+        "y": 50
       },
       "id": 4,
       "options": {
@@ -430,7 +636,7 @@
           "refId": "A"
         }
       ],
-      "title": "RAM usage (Docker, stacked, top $topn)",
+      "title": "RAM Max (Docker, stacked, top $topn)",
       "type": "timeseries"
     }
   ],
@@ -563,7 +769,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "*** Host-Inventory-Docker-Timeseries",
+  "title": "*** Docker-Timeseries",
   "uid": "hostinv-docker-ts",
-  "version": 4
+  "version": 7
 }

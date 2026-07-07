@@ -160,7 +160,8 @@ class DockerSource(BaseSource):
         else:
             cpus = -1.0  # /info fehlgeschlagen, keine Abschätzung möglich
 
-        ram_mb, cpu_percent = self._container_stats(cid)
+        ram_used_mb, cpu_percent = self._container_stats(cid)
+        ram_mb = details.get("HostConfig", {}).get("Memory", 0) // (1024 * 1024)
         nets = list(details.get("NetworkSettings", {}).get("Networks", {}).keys())
         mounts = details.get("Mounts", [])
         volumes = ",".join(
@@ -182,6 +183,7 @@ class DockerSource(BaseSource):
             cpu_usage_mhz=0,
             cpu_usage_percent=cpu_percent,
             ram_mb=ram_mb,
+            ram_used_mb=ram_used_mb,
             networks=",".join(_sanitize_label(n) for n in nets),
             volumes=volumes,
             source_type="docker",

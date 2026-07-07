@@ -150,7 +150,9 @@ class VMwareSource(BaseSource):
             state = "unknown"
         try:
             cpu_usage_mhz = vm.summary.quickStats.overallCpuUsage or 0
+            ram_used_mb = vm.summary.quickStats.guestMemoryUsage or 0
         except Exception:  # pylint: disable=broad-except
+            ram_used_mb = 0
             cpu_usage_mhz = 0
         devices = cfg.hardware.device or []
         disks = [d for d in devices if isinstance(d, vim.vm.device.VirtualDisk)]
@@ -168,6 +170,7 @@ class VMwareSource(BaseSource):
             cpu_usage_mhz=cpu_usage_mhz,
             cpu_usage_percent=0.0,
             ram_mb=cfg.hardware.memoryMB,
+            ram_used_mb=ram_used_mb,
             networks=self._networks_to_string(vm.network or []),
             volumes=self._disks_to_string(cfg.hardware.device or []),
             source_type="vmware",

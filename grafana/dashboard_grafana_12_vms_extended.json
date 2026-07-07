@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 15,
+  "id": 0,
   "links": [],
   "panels": [
     {
@@ -49,6 +49,73 @@
         "h": 4,
         "w": 4,
         "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(\n  vm_inventory_ram_used_mb{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n)",
+          "instant": true,
+          "legendFormat": "RAM Used",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Sum RAM Used",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "mbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
         "y": 0
       },
       "id": 3,
@@ -115,7 +182,7 @@
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 4,
+        "x": 8,
         "y": 0
       },
       "id": 2,
@@ -153,73 +220,6 @@
         }
       ],
       "title": "Sum CPUs",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 0
-      },
-      "id": 6,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.3.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum(\n  (vm_inventory_cpu_usage_mhz{source_type=\"vmware\", source_type=~\"$source_type\", host=~\"$host\"} >= 0)\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n)",
-          "instant": true,
-          "legendFormat": "CPU MHz",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Sum CPU MHz (VMware)",
       "type": "stat"
     },
     {
@@ -354,6 +354,73 @@
         }
       ],
       "title": "Sum Storage",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(\n  (vm_inventory_cpu_usage_mhz{source_type=\"vmware\", source_type=~\"$source_type\", host=~\"$host\"} >= 0)\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n)",
+          "instant": true,
+          "legendFormat": "CPU MHz",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Sum CPU MHz (VMware)",
       "type": "stat"
     },
     {
@@ -790,7 +857,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "vm_inventory_volumes_capacity_gb{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholder{info_stakeholder=~\"$stakeholder\"}",
+          "expr": "vm_inventory_volumes_capacity_gb{source_type=~\"$roup_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholder{info_stakeholder=~\"$stakeholder\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -857,6 +924,21 @@
           "legendFormat": "__auto",
           "range": false,
           "refId": "J"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vm_inventory_ram_useatch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholder{info_stakeholder=~\"$stakeholder\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "K"
         }
       ],
       "title": "Instances",
@@ -887,31 +969,32 @@
             "indexByName": {
               "Time": 2,
               "Value #A": 9,
-              "Value #B": 11,
-              "Value #C": 12,
-              "Value #D": 13,
-              "Value #E": 15,
-              "Value #F": 14,
-              "Value #G": 10,
-              "Value #H": 24,
-              "Value #I": 20,
+              "Value #B": 12,
+              "Value #C": 13,
+              "Value #D": 14,
+              "Value #E": 16,
+              "Value #F": 15,
+              "Value #G": 11,
+              "Value #H": 25,
+              "Value #I": 21,
               "Value #J": 8,
+              "Value #K": 10,
               "host": 3,
-              "info_annotation": 21,
-              "info_os_contact": 19,
-              "info_stakeholder": 18,
+              "info_annotation": 22,
+              "info_os_contact": 20,
+              "info_stakeholder": 19,
               "instance": 4,
               "job": 5,
-              "migration_batch": 22,
-              "migration_notes": 26,
-              "migration_status": 23,
-              "migration_target": 25,
+              "migration_batch": 23,
+              "migration_notes": 27,
+              "migration_status": 24,
+              "migration_target": 26,
               "name": 6,
-              "networks": 17,
+              "networks": 18,
               "source_type": 0,
               "state": 7,
               "uid": 1,
-              "volumes": 16
+              "volumes": 17
             },
             "renameByName": {
               "Value #A": "base",
@@ -924,6 +1007,7 @@
               "Value #H": "migration_difficulty",
               "Value #I": "info_downtime_impact",
               "Value #J": "Status",
+              "Value #K": "ram_used_mb",
               "migration_batch": "",
               "source_type": "",
               "volumes": ""
@@ -962,8 +1046,8 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "brh-tools03",
-          "value": "brh-tools03"
+          "text": "All",
+          "value": "$__all"
         },
         "definition": "label_values(vm_inventory_info,host)",
         "description": "",
@@ -972,9 +1056,7 @@
         "name": "host",
         "options": [],
         "query": {
-          "qryType": 1,
-          "query": "label_values(vm_inventory_info,host)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          "qryType": 1leQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
@@ -1006,8 +1088,8 @@
       {
         "allValue": ".*",
         "current": {
-          "text": "internal",
-          "value": "internal"
+          "text": "All",
+          "value": "$__all"
         },
         "definition": "label_values(vm_inventory_info_stakeholder,info_stakeholder)",
         "includeAll": true,
@@ -1053,5 +1135,5 @@
   "timezone": "browser",
   "title": "*** Host-Inventory-VMs",
   "uid": "add7g7t",
-  "version": 61
+  "version": 66
 }

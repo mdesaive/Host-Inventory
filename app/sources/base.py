@@ -133,9 +133,10 @@ class VM: # pylint: disable=too-many-instance-attributes
     name: str
     state: str
     cpus: float
-    cpu_usage_mhz: int       # VMware: overallCpuUsage, Docker: 0
+    cpu_usage_mhz: int        # VMware: overallCpuUsage, Docker: 0
     cpu_usage_percent: float  # Docker: CPU%, VMware: 0.0
-    ram_mb: int
+    ram_mb: int               # Docker: Limit; VMware: provisioned
+    ram_used_mb: int          # Docker: usage-cache; VMware: guestMemoryUsage
     volumes_count: int
     volumes_capacity_total_gb: int
     volumes: str

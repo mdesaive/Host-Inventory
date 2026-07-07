@@ -39,6 +39,7 @@ _MUTABLE_INFO_FIELDS: tuple[tuple[str, str, str], ...] = (
 _GAUGE_METRICS: tuple[tuple[str, str, str], ...] = (
     ("vm_inventory_cpus",                "cpus",                    "Number of CPUs"),
     ("vm_inventory_ram_mb",              "ram_mb",                  "RAM in megabytes"),
+    ("vm_inventory_ram_used_mb",         "ram_used_mb",             "RAM currently used in megabytes"),
     ("vm_inventory_cpu_usage_mhz",       "cpu_usage_mhz",           "CPU usage in MHz"),
     ("vm_inventory_cpu_usage_percent",   "cpu_usage_percent",       "CPU usage in percent"),
     ("vm_inventory_volumes_count",       "volumes_count",           "Number of attached volumes"),
