@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 15,
   "links": [],
   "panels": [
     {
@@ -703,7 +703,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "ram_mb"
+            "displayName": "cpu_percent"
           }
         ]
       },
@@ -820,7 +820,8 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "vm_inventory_migration_difficulty{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholde         "format": "table",
+          "expr": "vm_inventory_migration_difficulty{source_type=~\"$source_type\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholder{info_stakeholder=~\"$stakeholder\"}",
+          "format": "table",
           "hide": false,
           "instant": true,
           "legendFormat": "__auto",
@@ -924,7 +925,13 @@
               "Value #I": "info_downtime_impact",
               "Value #J": "Status",
               "migration_batch": "",
-              "source_type"le"
+              "source_type": "",
+              "volumes": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "preload": false,
@@ -999,8 +1006,8 @@
       {
         "allValue": ".*",
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "text": "internal",
+          "value": "internal"
         },
         "definition": "label_values(vm_inventory_info_stakeholder,info_stakeholder)",
         "includeAll": true,
@@ -1046,5 +1053,5 @@
   "timezone": "browser",
   "title": "*** Host-Inventory-VMs",
   "uid": "add7g7t",
-  "version": 60
+  "version": 61
 }
