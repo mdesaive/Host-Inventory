@@ -760,6 +760,252 @@
           "version": "13.0.1"
         }
       }
+    },
+    "panel-7": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PBFA97CFB590B2093"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "editorMode": "code",
+                      "expr": "vm_inventory_ram_used_mb{source_type=\"vmware\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholder{info_stakeholder=~\"$stakeholder\"}\nand on(uid, source_type)\ntopk($topn,\n  avg_over_time(vm_inventory_ram_used_mb{source_type=\"vmware\", host=~\"$host\"}[$__range] @ end())\n)",
+                      "legendFormat": "{{name}} {{host}}",
+                      "range": true
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 7,
+        "links": [],
+        "title": "RAM Used MB",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "auto",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "mbytes"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "min",
+                  "max",
+                  "mean"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-8": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PBFA97CFB590B2093"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "editorMode": "code",
+                      "expr": "vm_inventory_ram_used_mb{source_type=\"vmware\", host=~\"$host\"}\n  * on(uid, source_type) group_left() vm_inventory_migration_batch_info{migration_batch=~\"$batch\"}\n  * on(uid, source_type) group_left() vm_inventory_state_info{state=~\"$state\"}\n  * on(uid, source_type) group_left() vm_inventory_info_stakeholder{info_stakeholder=~\"$stakeholder\"}\nand on(uid, source_type)\ntopk($topn,\n  avg_over_time(vm_inventory_ram_used_mb{source_type=\"vmware\", host=~\"$host\"}[$__range] @ end())\n)",
+                      "legendFormat": "{{name}} {{host}}",
+                      "range": true
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 8,
+        "links": [],
+        "title": "RAM Used MB (stacked)",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 35,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "auto",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "normal"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "mbytes"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "min",
+                  "max",
+                  "mean"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "desc"
+              }
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
     }
   },
   "layout": {
@@ -797,7 +1043,7 @@
           "spec": {
             "element": {
               "kind": "ElementReference",
-              "name": "panel-3"
+              "name": "panel-7"
             },
             "height": 10,
             "width": 24,
@@ -810,7 +1056,7 @@
           "spec": {
             "element": {
               "kind": "ElementReference",
-              "name": "panel-4"
+              "name": "panel-8"
             },
             "height": 10,
             "width": 24,
@@ -823,7 +1069,7 @@
           "spec": {
             "element": {
               "kind": "ElementReference",
-              "name": "panel-5"
+              "name": "panel-3"
             },
             "height": 10,
             "width": 24,
@@ -836,12 +1082,38 @@
           "spec": {
             "element": {
               "kind": "ElementReference",
-              "name": "panel-6"
+              "name": "panel-4"
             },
             "height": 10,
             "width": 24,
             "x": 0,
             "y": 50
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-5"
+            },
+            "height": 10,
+            "width": 24,
+            "x": 0,
+            "y": 60
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-6"
+            },
+            "height": 10,
+            "width": 24,
+            "x": 0,
+            "y": 70
           }
         }
       ]
@@ -866,7 +1138,7 @@
       "1d"
     ],
     "fiscalYearStartMonth": 0,
-    "from": "now-6h",
+    "from": "now-1h",
     "hideTimepicker": false,
     "timezone": "browser",
     "to": "now"
