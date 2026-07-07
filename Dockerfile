@@ -9,19 +9,10 @@
 #   docker compose build
 #   docker compose up -d
 
-FROM python:3.12-slim
+FROM python:3.12-alpine
 
-ARG SUPERCRONIC_VERSION=0.2.29
-ARG SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v${SUPERCRONIC_VERSION}/supercronic-linux-amd64
-
-# Install supercronic
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && curl -fsSL "${SUPERCRONIC_URL}" -o /usr/local/bin/supercronic \
-    && chmod +x /usr/local/bin/supercronic \
-    && apt-get purge -y curl \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/*
+COPY bin/supercronic /usr/local/bin/supercronic
+RUN chmod +x /usr/local/bin/supercronic
 
 # Install Python dependencies
 COPY app/requirements.txt /app/requirements.txt
@@ -35,4 +26,4 @@ COPY app/ /app/
 WORKDIR /app
 
 # Crontab is mounted per sidecar at runtime
-CMD ["supercronic", "/crontab"]
+CMD ["/usr/local/bin/supercronic", "/crontab"]
