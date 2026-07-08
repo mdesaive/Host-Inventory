@@ -1,3 +1,5 @@
 INV_HOST=https://vCenter host name or IP>:8989
 INV_USERNAME=username
 INV_PROM_FILE_CHEAP=vmware_cheap.prom
+
+TZ=Europe/Berlin
