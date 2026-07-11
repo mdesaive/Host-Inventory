@@ -98,7 +98,7 @@ def parse_annotation(raw: str) -> tuple[dict[str, object], str]:
 
 
 @dataclass
-class VM: # pylint: disable=too-many-instance-attributes
+class VM:  # pylint: disable=too-many-instance-attributes
     """Flat representation of a virtual machine or container.
 
     Attributes:

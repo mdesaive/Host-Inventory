@@ -121,7 +121,7 @@ class VMwareSource(BaseSource):
         except Exception:  # pylint: disable=broad-except
             return "unknown"
 
-    def _vm_to_record(self, vm) -> VM:  # type: ignore[no-untyped-def]
+    def _vm_to_record(self, vm) -> VM:  # pylint: disable=too-many-locals
         """Convert a pyVmomi VirtualMachine object to a :class:`~sources.base.VM`.
 
         Args:
